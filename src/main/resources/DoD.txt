@@ -1,0 +1,20 @@
+DoD:
+1. O usuário deve poder visualizar o feed com todas as receitas cadastradas;
+2. O feed deve ser um flexbox responsivo com com no máximo 3 colunas e até 9 receitas iniciais;
+3. As demais receitas serão carregadas conforme o usuário der um scroll;
+4. O detalhe da receita deverá aparecer através de um Modal;
+5. O usuário deve poder cadastrar novas receitas.
+
+DoR:
+1. A histório do usuário deve estar bem definida;
+2. O design do front deve ser pré-estabelecido e aprovado;
+3. O projeto precisa estar igualmente dividido entre os devs da squad;
+4. O time deve entender as tecnologias que serão usadas;
+5. A arquitetura de software a ser utilizada precisa ser revisada pelo PM.
+
+Critérios de Aceite:
+1. O website deve ser uma SPA (Single Page Application)
+2. O produto deve seguir todos os requerimentos definidos e ser entregue 1 semana antes do prazo final, para testes e correção de bugs;
+3. A busca por receitas deve ser precisa, de acordo com seu título;
+4. A aplicação deve ser responsiva e rápida, sem travamentos ou atrasos significativos;
+5. O API deve ter uma interface de usuário intuitiva e fácil de usar, com um fluxo de navegação lógico e coerente.
