@@ -1,8 +1,8 @@
 package br.com.heycheff.api.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import br.com.heycheff.api.model.ReceitasProdutos;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ReceitasProdutosRepository extends JpaRepository<ReceitasProdutos, Integer>{
+public interface ReceitasProdutosRepository extends JpaRepository<ReceitasProdutos, Integer> {
 
 }

@@ -6,8 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ReceitaDTO {
-	private String pathThumb;
-	private String titulo;
-	
-	
+    private String pathThumb;
+    private String titulo;
 }

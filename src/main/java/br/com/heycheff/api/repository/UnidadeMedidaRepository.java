@@ -1,8 +1,8 @@
 package br.com.heycheff.api.repository;
 
+import br.com.heycheff.api.model.UnidadeMedida;
 import org.springframework.data.jpa.repository.JpaRepository;
-import br.com.heycheff.api.model.ReceitasStepProd;
 
-public interface UnidadeMedidaRepository extends JpaRepository<UnidadeMedida, Integer>{
+public interface UnidadeMedidaRepository extends JpaRepository<UnidadeMedida, Integer> {
 
 }

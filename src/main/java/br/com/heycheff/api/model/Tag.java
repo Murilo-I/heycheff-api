@@ -8,13 +8,10 @@ import lombok.Getter;
 
 @Entity
 @Getter
+public class Tag {
 
-public class ReceitasProdutos {
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		private Integer id_rec_prod;
-		private Integer id_receita;
-		private Integer id_produto;
-		private String auditado;
-		
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer tagId;
+    private String tag;
 }

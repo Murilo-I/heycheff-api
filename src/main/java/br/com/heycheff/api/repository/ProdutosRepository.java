@@ -1,8 +1,8 @@
 package br.com.heycheff.api.repository;
 
+import br.com.heycheff.api.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
-import br.com.heycheff.api.model.Produtos;
 
-public interface ProdutosRepository extends JpaRepository<Produtos, Integer>{
+public interface ProdutosRepository extends JpaRepository<Produto, Integer> {
 
 }
