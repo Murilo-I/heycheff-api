@@ -10,14 +10,23 @@ import java.time.LocalDateTime;
 public class Receita {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer receitaId;
+	private Integer id;
 	private String thumb;
 	private String titulo;
 	private LocalDateTime dateTime;
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private Usuario usuario;
-	@OneToMany
-	@JoinColumn(name = "tagId")
-	private Tag tags;
+
+	public void setThumb(String thumb) {
+		this.thumb = thumb;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public void setDateTime(LocalDateTime dateTime) {
+		this.dateTime = dateTime;
+	}
 }

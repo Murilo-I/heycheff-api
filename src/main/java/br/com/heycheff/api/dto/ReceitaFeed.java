@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ReceitaDTO {
-    private String pathThumb;
+public class ReceitaFeed {
+    private Integer id;
+    private String thumb;
     private String titulo;
 }

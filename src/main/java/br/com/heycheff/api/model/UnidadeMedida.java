@@ -5,12 +5,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class UnidadeMedida {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer unidMedida;
+    private Integer id;
     private String descricao;
+
+    public UnidadeMedida(String descricao) {
+        this.descricao = descricao;
+    }
 }
