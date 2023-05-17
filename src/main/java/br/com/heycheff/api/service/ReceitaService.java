@@ -81,7 +81,7 @@ public class ReceitaService {
         List<StepDTO> steps = modal.getSteps();
         steps.forEach(step -> {
             ReceitaStep savedStep = stepRepository.save(new ReceitaStep(receita, step.getPath(),
-                    step.getStep(), steps.size(), step.getModoPreparo()));
+                    step.getStep(), step.getModoPreparo()));
 
             step.getProdutos().forEach(produto -> {
                 Optional<Produto> optProd = produtoRepository.findByDescricao(produto.getDesc());
@@ -93,5 +93,4 @@ public class ReceitaService {
 
         return receita;
     }
-
 }

@@ -16,14 +16,12 @@ public class ReceitaStep {
     private Receita receita;
     private String path;
     private Integer step;
-    private Integer qtd;
     private String modoPreparo;
 
-    public ReceitaStep(Receita receita, String path, Integer step, Integer qtd, String modoPreparo) {
+    public ReceitaStep(Receita receita, String path, Integer step, String modoPreparo) {
         this.receita = receita;
         this.path = path;
         this.step = step;
-        this.qtd = qtd;
         this.modoPreparo = modoPreparo;
     }
 }
