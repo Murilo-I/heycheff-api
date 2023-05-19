@@ -19,6 +19,6 @@ public class ProdutoController {
 
     @GetMapping
     public ResponseEntity<List<ProdutoDescDTO>> listAll() {
-        return ResponseEntity.ok(service.listAll());
+        return ResponseEntity.ok(service.listaProdutos());
     }
 }

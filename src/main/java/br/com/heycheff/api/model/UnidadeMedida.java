@@ -7,9 +7,9 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
 @NoArgsConstructor
+@Entity(name = "UNIDADEMEDIDA")
 public class UnidadeMedida {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

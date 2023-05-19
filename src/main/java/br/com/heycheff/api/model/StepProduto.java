@@ -17,6 +17,8 @@ public class StepProduto {
     @ManyToOne
     @JoinColumn(name = "produtoId")
     private Produto produto;
+    @ManyToOne
+    @JoinColumn(name = "unidMedidaId")
     private UnidadeMedida unidMedida;
     private Float qtMedida;
 

@@ -7,8 +7,10 @@ import br.com.heycheff.api.dto.StepDTO;
 import br.com.heycheff.api.model.*;
 import br.com.heycheff.api.repository.*;
 import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
+import br.com.heycheff.api.util.exception.UnidadeMedidaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ public class ReceitaService {
     private StepProdutoRepository stepProdutoRepository;
     @Autowired
     private TagReceitaRepository tagReceitaRepository;
+    @Autowired
+    private UnidadeMedidaRepository medidaRepository;
 
 
     public List<ReceitaFeed> loadFeed() {
@@ -69,6 +73,7 @@ public class ReceitaService {
         return modal;
     }
 
+    @Transactional
     public Receita incluir(ReceitaModal modal) {
         Receita receita = new Receita();
         receita.setDateTime(LocalDateTime.now());
@@ -85,9 +90,15 @@ public class ReceitaService {
 
             step.getProdutos().forEach(produto -> {
                 Optional<Produto> optProd = produtoRepository.findByDescricao(produto.getDesc());
-                Produto prod = optProd.orElseGet(() -> produtoRepository.save(new Produto(produto.getDesc())));
-                stepProdutoRepository.save(new StepProduto(savedStep, prod,
-                        new UnidadeMedida(produto.getUnidMedida()), produto.getMedida()));
+                Produto prod = optProd.orElseGet(() -> produtoRepository.save(
+                        new Produto(produto.getDesc())));
+
+                UnidadeMedida unidadeMedida =
+                        medidaRepository.findByDescricao(produto.getUnidMedida())
+                                .orElseThrow(UnidadeMedidaNotFoundException::new);
+
+                stepProdutoRepository.save(
+                        new StepProduto(savedStep, prod, unidadeMedida, produto.getMedida()));
             });
         });
 
