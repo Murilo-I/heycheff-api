@@ -1,16 +1,15 @@
 package br.com.heycheff.api.service;
 
-import br.com.heycheff.api.dto.ProdutoDTO;
-import br.com.heycheff.api.dto.ReceitaFeed;
-import br.com.heycheff.api.dto.ReceitaModal;
-import br.com.heycheff.api.dto.StepDTO;
+import br.com.heycheff.api.dto.*;
 import br.com.heycheff.api.model.*;
 import br.com.heycheff.api.repository.*;
 import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
+import br.com.heycheff.api.util.exception.TagNotFoundException;
 import br.com.heycheff.api.util.exception.UnidadeMedidaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,7 +30,11 @@ public class ReceitaService {
     @Autowired
     private TagReceitaRepository tagReceitaRepository;
     @Autowired
+    private TagRepository tagRepository;
+    @Autowired
     private UnidadeMedidaRepository medidaRepository;
+    @Autowired
+    private FileService fileService;
 
 
     public List<ReceitaFeed> loadFeed() {
@@ -74,34 +77,43 @@ public class ReceitaService {
     }
 
     @Transactional
-    public Receita incluir(ReceitaModal modal) {
-        Receita receita = new Receita();
-        receita.setDateTime(LocalDateTime.now());
-        receita.setThumb(modal.getThumb());
-        receita.setTitulo(modal.getTitulo());
-        receitaRepository.save(receita);
+    public Receita incluir(ReceitaRequest request, MultipartFile thumb) {
+        Receita receita = receitaRepository.save(new Receita(request.getTitulo(),
+                LocalDateTime.now()));
 
-        modal.getTags().forEach(tag -> tagReceitaRepository.save(new TagReceita(receita, tag)));
-
-        List<StepDTO> steps = modal.getSteps();
-        steps.forEach(step -> {
-            ReceitaStep savedStep = stepRepository.save(new ReceitaStep(receita, step.getPath(),
-                    step.getStep(), step.getModoPreparo()));
-
-            step.getProdutos().forEach(produto -> {
-                Optional<Produto> optProd = produtoRepository.findByDescricao(produto.getDesc());
-                Produto prod = optProd.orElseGet(() -> produtoRepository.save(
-                        new Produto(produto.getDesc())));
-
-                UnidadeMedida unidadeMedida =
-                        medidaRepository.findByDescricao(produto.getUnidMedida())
-                                .orElseThrow(UnidadeMedidaNotFoundException::new);
-
-                stepProdutoRepository.save(
-                        new StepProduto(savedStep, prod, unidadeMedida, produto.getMedida()));
-            });
+        receita.setThumb(fileService.salvar(thumb, "thumbReceita" + receita.getId()));
+        request.getTags().forEach(tag -> {
+            Tag savedTag = tagRepository.findById(tag.getId()).orElseThrow(TagNotFoundException::new);
+            tagReceitaRepository.save(new TagReceita(receita, savedTag));
         });
 
         return receita;
+    }
+
+    @Transactional
+    public ReceitaStep incluir(StepDTO step, MultipartFile video, Integer receitaId) {
+        Receita receita = receitaRepository.findById(receitaId)
+                .orElseThrow(ReceitaNotFoundException::new);
+
+        ReceitaStep savedStep = stepRepository.save(new ReceitaStep(receita,
+                step.getStep(), step.getModoPreparo()));
+
+        savedStep.setPath(fileService.salvar(video,
+                "receitaStep_" + receitaId + "_" + savedStep.getStepId()));
+
+        step.getProdutos().forEach(produto -> {
+            Optional<Produto> optProd = produtoRepository.findByDescricao(produto.getDesc());
+            Produto prod = optProd.orElseGet(() -> produtoRepository.save(
+                    new Produto(produto.getDesc())));
+
+            UnidadeMedida unidadeMedida =
+                    medidaRepository.findByDescricao(produto.getUnidMedida())
+                            .orElseThrow(UnidadeMedidaNotFoundException::new);
+
+            stepProdutoRepository.save(
+                    new StepProduto(savedStep, prod, unidadeMedida, produto.getMedida()));
+        });
+
+        return savedStep;
     }
 }

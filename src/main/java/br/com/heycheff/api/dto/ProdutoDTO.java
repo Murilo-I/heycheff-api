@@ -3,9 +3,11 @@ package br.com.heycheff.api.dto;
 import br.com.heycheff.api.model.StepProduto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProdutoDTO {
 
     private String desc;

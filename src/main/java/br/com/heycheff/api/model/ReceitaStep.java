@@ -18,10 +18,13 @@ public class ReceitaStep {
     private Integer step;
     private String modoPreparo;
 
-    public ReceitaStep(Receita receita, String path, Integer step, String modoPreparo) {
+    public ReceitaStep(Receita receita, Integer step, String modoPreparo) {
         this.receita = receita;
-        this.path = path;
         this.step = step;
         this.modoPreparo = modoPreparo;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
