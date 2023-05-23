@@ -1,3 +1,4 @@
+
 DoD:
 1. O usuário deve poder visualizar o feed com todas as receitas cadastradas;
 2. O feed deve ser um flexbox responsivo com com no máximo 3 colunas e até 9 receitas iniciais;

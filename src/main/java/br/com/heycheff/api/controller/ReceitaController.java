@@ -1,9 +1,6 @@
 package br.com.heycheff.api.controller;
 
-import br.com.heycheff.api.dto.ReceitaFeed;
-import br.com.heycheff.api.dto.ReceitaModal;
-import br.com.heycheff.api.dto.ReceitaRequest;
-import br.com.heycheff.api.dto.StepDTO;
+import br.com.heycheff.api.dto.*;
 import br.com.heycheff.api.model.Receita;
 import br.com.heycheff.api.model.ReceitaStep;
 import br.com.heycheff.api.service.ReceitaService;
@@ -45,5 +42,10 @@ public class ReceitaController {
     public ResponseEntity<ReceitaStep> incluirStep(StepDTO step, MultipartFile video,
                                                    @PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.incluir(step, video, id));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Receita> atualizaStatus(@RequestBody ReceitaStatusDTO status){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.atualizaStatus())
     }
 }

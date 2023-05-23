@@ -116,4 +116,8 @@ public class ReceitaService {
 
         return savedStep;
     }
+
+    public Receita atualizaStatus(ReceitaStatusDTO status) {
+
+    }
 }

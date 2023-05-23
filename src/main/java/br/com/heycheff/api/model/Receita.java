@@ -16,6 +16,8 @@ public class Receita {
     private String thumb;
     private String titulo;
     private LocalDateTime dateTime;
+    private Boolean status = false;
+
     @ManyToOne
     @JoinColumn(name = "userId")
     private Usuario usuario;
@@ -28,4 +30,10 @@ public class Receita {
     public void setThumb(String thumb) {
         this.thumb = thumb;
     }
+
+    public void setStatus(Boolean status){
+        this.statuss = status;
+    }
 }
+
+
