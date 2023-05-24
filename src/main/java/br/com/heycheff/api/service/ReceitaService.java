@@ -5,7 +5,6 @@ import br.com.heycheff.api.model.*;
 import br.com.heycheff.api.repository.*;
 import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
 import br.com.heycheff.api.util.exception.TagNotFoundException;
-import br.com.heycheff.api.util.exception.UnidadeMedidaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ReceitaService {
@@ -87,9 +85,8 @@ public class ReceitaService {
     }
 
     @Transactional
-    public Receita atualizaStatus(ReceitaStatusDTO dto, Integer id) {
-        Receita receita = receitaRepository.findById(id).orElseThrow(ReceitaNotFoundException::new);
-        receita.setStatus(dto.getStatus());
-        return receita;
+    public void atualizaStatus(ReceitaStatusDTO dto, Integer id) {
+        receitaRepository.findById(id).orElseThrow(ReceitaNotFoundException::new)
+                .setStatus(dto.getStatus());
     }
 }

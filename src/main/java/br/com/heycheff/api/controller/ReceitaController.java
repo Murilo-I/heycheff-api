@@ -1,8 +1,10 @@
 package br.com.heycheff.api.controller;
 
-import br.com.heycheff.api.dto.*;
+import br.com.heycheff.api.dto.ReceitaFeed;
+import br.com.heycheff.api.dto.ReceitaModal;
+import br.com.heycheff.api.dto.ReceitaRequest;
+import br.com.heycheff.api.dto.ReceitaStatusDTO;
 import br.com.heycheff.api.model.Receita;
-import br.com.heycheff.api.model.ReceitaStep;
 import br.com.heycheff.api.service.ReceitaService;
 import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +41,9 @@ public class ReceitaController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Receita> atualizaStatus(@RequestBody ReceitaStatusDTO status,
-                                                  @PathVariable Integer id){
-        return ResponseEntity.ok(service.atualizaStatus(status, id));
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizaStatus(@RequestBody ReceitaStatusDTO status,
+                                                  @PathVariable Integer id) {
+        service.atualizaStatus(status, id);
     }
 }

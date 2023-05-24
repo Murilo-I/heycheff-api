@@ -65,5 +65,6 @@ public class StepService {
 
         stepProdutoRepository.findByStep(step).forEach(stepProdutoRepository::delete);
         stepRepository.delete(step);
+        fileService.delete(step.getPath());
     }
 }

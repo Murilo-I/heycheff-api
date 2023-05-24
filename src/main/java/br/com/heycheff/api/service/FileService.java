@@ -21,13 +21,13 @@ public class FileService {
     private String basePath;
 
     public String salvar(MultipartFile file, String fileName) {
-        Path dirPath = Paths.get(basePath);
+        Path baseDir = Paths.get(basePath);
         String pathToSave = fileName + "." +
                 Objects.requireNonNull(file.getContentType()).split("/")[1];
-        Path filePath = dirPath.resolve(pathToSave);
+        Path filePath = baseDir.resolve(pathToSave);
 
         try {
-            Files.createDirectories(dirPath);
+            Files.createDirectories(baseDir);
             file.transferTo(filePath.toFile());
             return pathToSave;
         } catch (IOException e) {
@@ -35,17 +35,28 @@ public class FileService {
         }
     }
 
-    public Resource getMedia(String path) {
-        Path dirPath = Paths.get(basePath);
-        Path file = dirPath.resolve(path);
+    public Resource getMedia(String fileName) {
+        Path baseDir = Paths.get(basePath);
+        Path filePath = baseDir.resolve(fileName);
 
         try {
-            Resource resource = new UrlResource(file.toUri());
+            Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() || resource.isReadable())
                 return resource;
             else
                 throw new FileNotFoundException();
         } catch (MalformedURLException | FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void delete(String fileName) {
+        Path baseDir = Paths.get(basePath);
+        Path filePath = baseDir.resolve(fileName);
+
+        try {
+            Files.delete(filePath);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
