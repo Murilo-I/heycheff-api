@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface ReceitaRepository extends JpaRepository<Receita, Integer> {
     List<Receita> findByStatus(Boolean status);
-
 }

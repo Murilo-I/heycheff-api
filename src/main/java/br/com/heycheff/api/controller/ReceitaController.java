@@ -34,18 +34,13 @@ public class ReceitaController {
     }
 
     @PostMapping
-    public ResponseEntity<Receita> incluirReceita(ReceitaRequest receita, MultipartFile thumb) {
+    public ResponseEntity<Receita> incluir(ReceitaRequest receita, MultipartFile thumb) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.incluir(receita, thumb));
     }
 
-    @PostMapping("/{id}/steps")
-    public ResponseEntity<ReceitaStep> incluirStep(StepDTO step, MultipartFile video,
-                                                   @PathVariable Integer id) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.incluir(step, video, id));
-    }
-
     @PatchMapping("/{id}")
-    public ResponseEntity<Receita> atualizaStatus(@RequestBody ReceitaStatusDTO status){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.atualizaStatus())
+    public ResponseEntity<Receita> atualizaStatus(@RequestBody ReceitaStatusDTO status,
+                                                  @PathVariable Integer id){
+        return ResponseEntity.ok(service.atualizaStatus(status, id));
     }
 }

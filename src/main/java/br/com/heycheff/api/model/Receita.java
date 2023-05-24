@@ -32,7 +32,7 @@ public class Receita {
     }
 
     public void setStatus(Boolean status){
-        this.statuss = status;
+        this.status = status;
     }
 }
 

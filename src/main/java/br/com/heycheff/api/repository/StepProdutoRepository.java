@@ -1,8 +1,8 @@
 package br.com.heycheff.api.repository;
 
 import br.com.heycheff.api.model.ReceitaStep;
-import org.springframework.data.jpa.repository.JpaRepository;
 import br.com.heycheff.api.model.StepProduto;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 

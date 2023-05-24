@@ -24,21 +24,17 @@ public class ReceitaService {
     @Autowired
     private ReceitaStepRepository stepRepository;
     @Autowired
-    private ProdutoRepository produtoRepository;
-    @Autowired
     private StepProdutoRepository stepProdutoRepository;
     @Autowired
     private TagReceitaRepository tagReceitaRepository;
     @Autowired
     private TagRepository tagRepository;
     @Autowired
-    private UnidadeMedidaRepository medidaRepository;
-    @Autowired
     private FileService fileService;
 
 
     public List<ReceitaFeed> loadFeed() {
-        List<Receita> receitas = receitaRepository.findAll();
+        List<Receita> receitas = receitaRepository.findByStatus(true);
         List<ReceitaFeed> receitasFeed = new ArrayList<>();
 
         receitas.forEach(r -> receitasFeed
@@ -91,33 +87,9 @@ public class ReceitaService {
     }
 
     @Transactional
-    public ReceitaStep incluir(StepDTO step, MultipartFile video, Integer receitaId) {
-        Receita receita = receitaRepository.findById(receitaId)
-                .orElseThrow(ReceitaNotFoundException::new);
-
-        ReceitaStep savedStep = stepRepository.save(new ReceitaStep(receita,
-                step.getStep(), step.getModoPreparo()));
-
-        savedStep.setPath(fileService.salvar(video,
-                "receitaStep_" + receitaId + "_" + savedStep.getStepId()));
-
-        step.getProdutos().forEach(produto -> {
-            Optional<Produto> optProd = produtoRepository.findByDescricao(produto.getDesc());
-            Produto prod = optProd.orElseGet(() -> produtoRepository.save(
-                    new Produto(produto.getDesc())));
-
-            UnidadeMedida unidadeMedida =
-                    medidaRepository.findByDescricao(produto.getUnidMedida())
-                            .orElseThrow(UnidadeMedidaNotFoundException::new);
-
-            stepProdutoRepository.save(
-                    new StepProduto(savedStep, prod, unidadeMedida, produto.getMedida()));
-        });
-
-        return savedStep;
-    }
-
-    public Receita atualizaStatus(ReceitaStatusDTO status) {
-
+    public Receita atualizaStatus(ReceitaStatusDTO dto, Integer id) {
+        Receita receita = receitaRepository.findById(id).orElseThrow(ReceitaNotFoundException::new);
+        receita.setStatus(dto.getStatus());
+        return receita;
     }
 }
