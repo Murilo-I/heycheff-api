@@ -24,3 +24,6 @@ spring:
       max-request-size: 10MB
 
 media-base-path: "C:\\heycheff\\media"
+
+cors:
+  allowed-origins: "http://localhost:4200"
