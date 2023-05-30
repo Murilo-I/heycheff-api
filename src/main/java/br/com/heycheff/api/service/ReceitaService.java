@@ -5,6 +5,7 @@ import br.com.heycheff.api.model.*;
 import br.com.heycheff.api.repository.*;
 import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
 import br.com.heycheff.api.util.exception.TagNotFoundException;
+import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,8 @@ public class ReceitaService {
     private TagRepository tagRepository;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private ServletContext context;
 
 
     public List<ReceitaFeed> loadFeed() {
@@ -36,7 +39,7 @@ public class ReceitaService {
         List<ReceitaFeed> receitasFeed = new ArrayList<>();
 
         receitas.forEach(r -> receitasFeed
-                .add(new ReceitaFeed(r.getId(), r.getThumb(), r.getTitulo())));
+                .add(new ReceitaFeed(r.getId(), resolve(r.getThumb()), r.getTitulo())));
 
         return receitasFeed;
     }
@@ -88,5 +91,9 @@ public class ReceitaService {
     public void atualizaStatus(ReceitaStatusDTO dto, Integer id) {
         receitaRepository.findById(id).orElseThrow(ReceitaNotFoundException::new)
                 .setStatus(dto.getStatus());
+    }
+
+    private String resolve(String path) {
+        return context.getContextPath() + "/media?path=" + path;
     }
 }
