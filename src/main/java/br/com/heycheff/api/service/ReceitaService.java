@@ -52,7 +52,7 @@ public class ReceitaService {
         receitaSteps.forEach(step -> {
             StepDTO dto = new StepDTO();
             dto.setStep(step.getStep());
-            dto.setPath(step.getPath());
+            dto.setPath(resolve(step.getPath()));
             dto.setModoPreparo(step.getModoPreparo());
 
             List<StepProduto> stepProdutos = stepProdutoRepository.findByStep(step);
