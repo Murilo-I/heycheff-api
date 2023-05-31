@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: /heycheff
 
+logging:
+  level:
+    org.springframework: DEBUG
+
 spring:
   h2:
     console:
