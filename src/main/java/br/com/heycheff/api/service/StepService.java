@@ -37,9 +37,6 @@ public class StepService {
         ReceitaStep savedStep = stepRepository.save(new ReceitaStep(receita,
                 step.getStep(), step.getModoPreparo()));
 
-        savedStep.setPath(fileService.salvar(video,
-                "receitaStep_" + receitaId + "_" + savedStep.getStepId()));
-
         step.getProdutos().forEach(produto -> {
             Optional<Produto> optProd = produtoRepository.findByDescricao(produto.getDesc());
             Produto prod = optProd.orElseGet(() -> produtoRepository.save(
@@ -52,6 +49,9 @@ public class StepService {
             stepProdutoRepository.save(
                     new StepProduto(savedStep, prod, unidadeMedida, produto.getMedida()));
         });
+
+        savedStep.setPath(fileService.salvar(video,
+                "receitaStep_" + receitaId + "_" + savedStep.getStepId()));
 
         return savedStep;
     }
