@@ -1,10 +1,11 @@
-INSERT INTO UNIDADEMEDIDA(descricao) VALUES('grama');
-INSERT INTO UNIDADEMEDIDA(descricao) VALUES('xícara de chá');
-INSERT INTO UNIDADEMEDIDA(descricao) VALUES('colher de sopa');
-INSERT INTO UNIDADEMEDIDA(descricao) VALUES('colher de chá');
-INSERT INTO UNIDADEMEDIDA(descricao) VALUES('colher de café');
-INSERT INTO UNIDADEMEDIDA(descricao) VALUES('mililitro');
-INSERT INTO UNIDADEMEDIDA(descricao) VALUES('copo americano');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('unidade');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('grama');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('xícara de chá');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('colher de sopa');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('colher de chá');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('colher de café');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('mililitro');
+INSERT INTO UNIDADE_MEDIDA(descricao) VALUES('copo americano');
 INSERT INTO TAG(tag) values('Salgado');
 INSERT INTO TAG(tag) values('Doce');
 INSERT INTO TAG(tag) values('Vegano');

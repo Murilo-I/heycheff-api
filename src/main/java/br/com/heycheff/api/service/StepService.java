@@ -51,7 +51,7 @@ public class StepService {
         });
 
         savedStep.setPath(fileService.salvar(video,
-                "receitaStep_" + receitaId + "_" + savedStep.getStepId()));
+                "receitaStep_" + receitaId + "_" + savedStep.getStep()));
 
         return savedStep;
     }
