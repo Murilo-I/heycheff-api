@@ -16,7 +16,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
             StepNotInReceitaException.class,
             TagNotFoundException.class,
             UnidadeMedidaNotFoundException.class})
-    public ResponseEntity<ErrorMessage> handleNotFoundException() {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessage("Endpoint Not Found!"));
+    public ResponseEntity<ErrorMessage> handleNotFoundException(RuntimeException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessage(exception.getMessage()));
     }
 }

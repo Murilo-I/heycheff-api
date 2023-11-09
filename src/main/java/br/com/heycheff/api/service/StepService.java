@@ -61,7 +61,10 @@ public class StepService {
         ReceitaStep step = stepRepository.findById(stepId).orElseThrow(StepNotFoundException::new);
 
         if (!step.getReceita().equals(receita))
-            throw new StepNotInReceitaException();
+            throw new StepNotInReceitaException(
+                    String.format("O Step de ID: %d não existe para a receita de ID: %d",
+                            stepId, receitaId)
+            );
 
         stepProdutoRepository.findByStep(step).forEach(stepProdutoRepository::delete);
         stepRepository.delete(step);

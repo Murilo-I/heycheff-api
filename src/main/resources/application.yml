@@ -6,6 +6,7 @@ server:
 logging:
   level:
     org.springframework: ERROR
+    org.springframework.web: DEBUG
 
 spring:
   h2:

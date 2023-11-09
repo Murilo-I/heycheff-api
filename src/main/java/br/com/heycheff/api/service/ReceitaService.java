@@ -65,8 +65,6 @@ public class ReceitaService {
         List<Tag> tags = tagReceitaRepository.findByReceitaId(receita.getId());
 
         ReceitaModal modal = new ReceitaModal();
-        modal.setThumb(receita.getThumb());
-        modal.setTitulo(receita.getTitulo());
         modal.setSteps(steps);
         modal.setTags(tags);
 
