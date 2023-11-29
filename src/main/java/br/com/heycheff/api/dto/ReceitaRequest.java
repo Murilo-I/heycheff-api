@@ -1,6 +1,5 @@
 package br.com.heycheff.api.dto;
 
-import br.com.heycheff.api.model.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,5 +10,5 @@ import java.util.List;
 public class ReceitaRequest {
 
     private String titulo;
-    private List<Tag> tags;
+    private List<TagDTO> tags;
 }

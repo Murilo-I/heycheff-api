@@ -1,12 +1,12 @@
 package br.com.heycheff.api.controller;
 
-import br.com.heycheff.api.dto.ReceitaFeed;
+import br.com.heycheff.api.dto.ReceiptFeed;
 import br.com.heycheff.api.dto.ReceitaModal;
 import br.com.heycheff.api.dto.ReceitaRequest;
 import br.com.heycheff.api.dto.ReceitaStatusDTO;
-import br.com.heycheff.api.model.Receita;
+import br.com.heycheff.api.model.Receipt;
 import br.com.heycheff.api.model.Tag;
-import br.com.heycheff.api.service.ReceitaService;
+import br.com.heycheff.api.service.ReceiptService;
 import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,15 +24,15 @@ import java.util.List;
 @RequestMapping("/receitas")
 public class ReceitaController {
     @Autowired
-    private ReceitaService service;
+    ReceiptService service;
 
     @GetMapping
-    public ResponseEntity<List<ReceitaFeed>> loadFeed() {
+    public ResponseEntity<List<ReceiptFeed>> loadFeed() {
         return ResponseEntity.ok(service.loadFeed());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReceitaModal> loadModal(@PathVariable Integer id) {
+    public ResponseEntity<ReceitaModal> loadModal(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(service.loadModal(id));
         } catch (ReceitaNotFoundException e) {
@@ -41,16 +41,17 @@ public class ReceitaController {
     }
 
     @PostMapping
-    public ResponseEntity<Receita> incluir(String titulo, String tags, MultipartFile thumb) {
-        Type listOfTags = new TypeToken<ArrayList<Tag>>() {}.getType();
+    public ResponseEntity<Receipt> incluir(String titulo, String tags, MultipartFile thumb) {
+        Type listOfTags = new TypeToken<ArrayList<Tag>>() {
+        }.getType();
         var receita = new ReceitaRequest(titulo, new Gson().fromJson(tags, listOfTags));
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.incluir(receita, thumb));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(receita, thumb));
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void atualizaStatus(@RequestBody ReceitaStatusDTO status,
-                               @PathVariable Integer id) {
-        service.atualizaStatus(status, id);
+                               @PathVariable Long id) {
+        service.updateStatus(status, id);
     }
 }

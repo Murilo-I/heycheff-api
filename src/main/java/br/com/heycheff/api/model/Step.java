@@ -4,9 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UnidadeMedida {
-    private String descricao;
+public class Step {
+
+    private String path;
+    private Integer step;
+    private String modoPreparo;
+    List<Product> products;
 }

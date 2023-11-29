@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ReceitaFeed {
-    private Integer id;
+public class ReceiptFeed {
+    private Long id;
     private String thumb;
     private String titulo;
 }

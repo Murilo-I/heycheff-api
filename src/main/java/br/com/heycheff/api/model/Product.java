@@ -1,12 +1,14 @@
 package br.com.heycheff.api.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class UnidadeMedida {
+public class Product {
+
     private String descricao;
+    private Boolean auditado;
+    private UnidadeMedida unidMedida;
+    private Float qtMedida;
 }

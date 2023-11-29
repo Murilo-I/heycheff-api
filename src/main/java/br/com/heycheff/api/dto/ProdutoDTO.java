@@ -1,6 +1,6 @@
 package br.com.heycheff.api.dto;
 
-import br.com.heycheff.api.model.StepProduto;
+import br.com.heycheff.api.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,8 +14,9 @@ public class ProdutoDTO {
     private String unidMedida;
     private Float medida;
 
-    public static ProdutoDTO fromEntity(StepProduto stepProduto) {
-        return new ProdutoDTO(stepProduto.getProduto().getDescricao(),
-                stepProduto.getUnidMedida().getDescricao(), stepProduto.getQtMedida());
+    public static ProdutoDTO fromEntity(Product product) {
+        return new ProdutoDTO(product.getDescricao(),
+                product.getUnidMedida().getDescricao(),
+                product.getQtMedida());
     }
 }
