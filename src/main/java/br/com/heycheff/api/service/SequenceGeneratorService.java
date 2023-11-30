@@ -1,6 +1,6 @@
 package br.com.heycheff.api.service;
 
-import br.com.heycheff.api.model.ReceiptSequence;
+import br.com.heycheff.api.model.Sequences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
@@ -19,9 +19,9 @@ public class SequenceGeneratorService {
     MongoOperations mongoOperations;
 
     protected Long generateSequence(String seqName) {
-        ReceiptSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
+        Sequences counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
                 new Update().inc("seq", 1), options().returnNew(true).upsert(true),
-                ReceiptSequence.class);
+                Sequences.class);
         return !Objects.isNull(counter) ? counter.getSeq() : 1;
     }
 }

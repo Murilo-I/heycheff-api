@@ -1,14 +1,17 @@
 package br.com.heycheff.api.model;
 
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
 @Document
-public class ReceiptSequence {
-
+@Getter
+public class User {
     @Id
     private String id;
-    private Long seq;
+    private String username;
+    private String email;
+    private String password;
+    private String nickname;
+    private int roles;
 }

@@ -11,11 +11,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ReceitaNotFoundException.class,
+    @ExceptionHandler({ReceiptNotFoundException.class,
             StepNotFoundException.class,
-            StepNotInReceitaException.class,
+            StepNotInReceiptException.class,
             TagNotFoundException.class,
-            UnidadeMedidaNotFoundException.class})
+            MeasureUnitNotFoundException.class})
     public ResponseEntity<ErrorMessage> handleNotFoundException(RuntimeException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(exception.getMessage()));

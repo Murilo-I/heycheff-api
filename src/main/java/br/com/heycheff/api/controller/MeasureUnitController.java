@@ -1,7 +1,7 @@
 package br.com.heycheff.api.controller;
 
 import br.com.heycheff.api.dto.UnidadeMedidaDTO;
-import br.com.heycheff.api.service.ProdutoService;
+import br.com.heycheff.api.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,15 +13,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/produtos/{id}/medidas")
-public class UnidadeMedidaController {
+public class MeasureUnitController {
 
     @Autowired
-    private ProdutoService service;
+    ProductService service;
 
     @GetMapping
     public ResponseEntity<List<UnidadeMedidaDTO>> list(@PathVariable(name = "id") Integer produtoId) {
         if (produtoId == 0)
-            return ResponseEntity.ok(service.listaUnidMedidas());
+            return ResponseEntity.ok(service.listMeasureUnits());
         else
             return ResponseEntity.notFound().build();
     }

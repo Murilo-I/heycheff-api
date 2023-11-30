@@ -3,7 +3,8 @@ package br.com.heycheff.api.service;
 import br.com.heycheff.api.dto.*;
 import br.com.heycheff.api.model.Receipt;
 import br.com.heycheff.api.repository.ReceiptRepository;
-import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
+import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
+import br.com.heycheff.api.util.map.TypeMapper;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,10 @@ public class ReceiptService {
     FileService fileService;
     @Autowired
     ServletContext context;
-
+    @Autowired
+    SequenceGeneratorService sequenceService;
+    @Autowired
+    TypeMapper mapper;
 
     public List<ReceiptFeed> loadFeed() {
         List<Receipt> receipts = receiptRepository.findByStatus(true);
@@ -36,20 +40,20 @@ public class ReceiptService {
     }
 
     public ReceitaModal loadModal(Long id) {
-        Receipt receipt = receiptRepository.findByIdSeq(id).orElseThrow(ReceitaNotFoundException::new);
+        Receipt receipt = receiptRepository.findByIdSeq(id).orElseThrow(ReceiptNotFoundException::new);
         List<StepDTO> steps = new ArrayList<>();
 
         receipt.getSteps().forEach(step -> {
             StepDTO dto = new StepDTO();
             dto.setStep(step.getStep());
             dto.setPath(resolve(step.getPath()));
-            dto.setModoPreparo(step.getModoPreparo());
+            dto.setModoPreparo(step.getPreparationMode());
             dto.setProdutos(step.getProducts().stream()
-                    .map(ProdutoDTO::fromEntity).toList());
+                    .map(mapper::fromEntity).toList());
             steps.add(dto);
         });
 
-        List<TagDTO> tags = receipt.getTags().stream().map(TagDTO::fromEntity).toList();
+        List<TagDTO> tags = receipt.getTags().stream().map(mapper::fromEntity).toList();
 
         ReceitaModal modal = new ReceitaModal();
         modal.setSteps(steps);
@@ -65,13 +69,14 @@ public class ReceiptService {
 
         receipt.setThumb(fileService.salvar(thumb, "thumbReceita" + receipt.getIdSeq()));
         receipt.setTags(request.getTags().stream().map(TagDTO::toEntity).toList());
+        receipt.setIdSeq(sequenceService.generateSequence(Receipt.RECEIPT_SEQUENCE));
 
         return receipt;
     }
 
     @Transactional
     public void updateStatus(ReceitaStatusDTO dto, Long id) {
-        receiptRepository.findByIdSeq(id).orElseThrow(ReceitaNotFoundException::new)
+        receiptRepository.findByIdSeq(id).orElseThrow(ReceiptNotFoundException::new)
                 .setStatus(dto.getStatus());
     }
 

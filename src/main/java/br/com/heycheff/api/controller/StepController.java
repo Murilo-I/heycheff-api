@@ -1,8 +1,8 @@
 package br.com.heycheff.api.controller;
 
-import br.com.heycheff.api.dto.ProdutoDTO;
+import br.com.heycheff.api.dto.ProductDTO;
 import br.com.heycheff.api.dto.StepDTO;
-import br.com.heycheff.api.model.ReceitaStep;
+import br.com.heycheff.api.model.Step;
 import br.com.heycheff.api.service.StepService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,22 +20,23 @@ import java.util.ArrayList;
 public class StepController {
 
     @Autowired
-    private StepService service;
+    StepService service;
 
     @PostMapping
-    public ResponseEntity<ReceitaStep> incluir(Integer step, String modoPreparo,
-                                               String produtos,
-                                               MultipartFile video,
-                                               @PathVariable Integer id) {
-        Type listOfProdutos = new TypeToken<ArrayList<ProdutoDTO>>() {}.getType();
-        var dto = new StepDTO(null, step, new Gson().fromJson(produtos, listOfProdutos), modoPreparo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.incluir(dto, video, id));
+    public ResponseEntity<Step> save(Integer step, String modoPreparo,
+                                     String products,
+                                     MultipartFile video,
+                                     @PathVariable Long id) {
+        Type listOfProducts = new TypeToken<ArrayList<ProductDTO>>() {
+        }.getType();
+        var dto = new StepDTO(null, step, new Gson().fromJson(products, listOfProducts), modoPreparo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(dto, video, id));
     }
 
     @DeleteMapping("/{stepId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletar(@PathVariable Integer stepId,
-                        @PathVariable Integer id) {
-        service.deletar(stepId, id);
+    public void delete(@PathVariable Long stepId,
+                       @PathVariable Long id) {
+        service.delete(stepId, id);
     }
 }

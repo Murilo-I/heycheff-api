@@ -1,73 +1,67 @@
 package br.com.heycheff.api.service;
 
+import br.com.heycheff.api.dto.ProductDTO;
 import br.com.heycheff.api.dto.StepDTO;
-import br.com.heycheff.api.model.*;
-import br.com.heycheff.api.repository.*;
-import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
-import br.com.heycheff.api.util.exception.StepNotFoundException;
-import br.com.heycheff.api.util.exception.StepNotInReceitaException;
-import br.com.heycheff.api.util.exception.UnidadeMedidaNotFoundException;
+import br.com.heycheff.api.model.ProductDescriptions;
+import br.com.heycheff.api.model.Receipt;
+import br.com.heycheff.api.model.Step;
+import br.com.heycheff.api.repository.ProductRepository;
+import br.com.heycheff.api.repository.ReceiptRepository;
+import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
+import br.com.heycheff.api.util.exception.StepNotInReceiptException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class StepService {
+    private static final String STEP_NOT_IN_RECEIPT_MESSAGE =
+            "O Step de ID: %d não existe para a receita de ID: %d";
+
     @Autowired
-    private ReceitaRepository receitaRepository;
+    ReceiptRepository receiptRepository;
     @Autowired
-    private ReceitaStepRepository stepRepository;
+    ProductRepository productRepository;
     @Autowired
-    private UnidadeMedidaRepository medidaRepository;
+    FileService fileService;
     @Autowired
-    private ProdutoRepository produtoRepository;
-    @Autowired
-    private FileService fileService;
-    @Autowired
-    private StepProdutoRepository stepProdutoRepository;
+    SequenceGeneratorService sequenceService;
 
     @Transactional
-    public ReceitaStep incluir(StepDTO step, MultipartFile video, Integer receitaId) {
-        Receita receita = receitaRepository.findById(receitaId)
-                .orElseThrow(ReceitaNotFoundException::new);
+    public Step save(StepDTO step, MultipartFile video, Long receiptId) {
+        Receipt receipt = receiptRepository.findByIdSeq(receiptId)
+                .orElseThrow(ReceiptNotFoundException::new);
 
-        ReceitaStep savedStep = stepRepository.save(new ReceitaStep(receita,
-                step.getStep(), step.getModoPreparo()));
+        Step savedStep = new Step(sequenceService.generateSequence(Step.STEP_SEQUENCE),
+                step.getStep(), step.getModoPreparo());
 
-        step.getProdutos().forEach(produto -> {
-            Optional<Produto> optProd = produtoRepository.findByDescricao(produto.getDesc());
-            Produto prod = optProd.orElseGet(() -> produtoRepository.save(
-                    new Produto(produto.getDesc())));
-
-            UnidadeMedida unidadeMedida =
-                    medidaRepository.findByDescricao(produto.getUnidMedida())
-                            .orElseThrow(UnidadeMedidaNotFoundException::new);
-
-            stepProdutoRepository.save(
-                    new StepProduto(savedStep, prod, unidadeMedida, produto.getMedida()));
+        savedStep.setProducts(step.getProdutos().stream().map(ProductDTO::toEntity).toList());
+        step.getProdutos().forEach(product -> {
+            if (productRepository.findByValue(product.getDesc()).isEmpty())
+                productRepository.save(new ProductDescriptions(product.getDesc()));
         });
 
         savedStep.setPath(fileService.salvar(video,
-                "receitaStep_" + receitaId + "_" + savedStep.getStep()));
+                "receitaStep_" + receiptId + "_" + savedStep.getStep()));
+
+        receipt.getSteps().add(savedStep);
 
         return savedStep;
     }
 
-    public void deletar(Integer stepId, Integer receitaId) {
-        Receita receita = receitaRepository.findById(receitaId).orElseThrow(ReceitaNotFoundException::new);
-        ReceitaStep step = stepRepository.findById(stepId).orElseThrow(StepNotFoundException::new);
+    public void delete(Long stepId, Long receiptId) {
+        Receipt receipt = receiptRepository.findByIdSeq(receiptId).orElseThrow(ReceiptNotFoundException::new);
+        List<Step> steps = receipt.getSteps();
 
-        if (!step.getReceita().equals(receita))
-            throw new StepNotInReceitaException(
-                    String.format("O Step de ID: %d não existe para a receita de ID: %d",
-                            stepId, receitaId)
-            );
+        Step delStep = steps.stream().filter(step -> step.getStepId().equals(stepId))
+                .findFirst().orElseThrow(() -> new StepNotInReceiptException(
+                        String.format(STEP_NOT_IN_RECEIPT_MESSAGE, stepId, receiptId)
+                ));
 
-        stepProdutoRepository.findByStep(step).forEach(stepProdutoRepository::delete);
-        stepRepository.delete(step);
-        fileService.delete(step.getPath());
+        fileService.delete(delStep.getPath());
+        steps.remove(delStep);
     }
 }

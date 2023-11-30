@@ -1,6 +1,6 @@
 package br.com.heycheff.api.util.exception;
 
-public class UnidadeMedidaNotFoundException extends RuntimeException {
+public class MeasureUnitNotFoundException extends RuntimeException {
 
     @Override
     public String getMessage() {

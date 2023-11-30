@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UnidadeMedidaDTO {
+public class ProductDescDTO {
 
-    private String descricao;
+    private String produtoDesc;
 }

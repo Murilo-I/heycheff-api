@@ -1,13 +1,9 @@
 package br.com.heycheff.api.controller;
 
-import br.com.heycheff.api.dto.ReceiptFeed;
-import br.com.heycheff.api.dto.ReceitaModal;
-import br.com.heycheff.api.dto.ReceitaRequest;
-import br.com.heycheff.api.dto.ReceitaStatusDTO;
+import br.com.heycheff.api.dto.*;
 import br.com.heycheff.api.model.Receipt;
-import br.com.heycheff.api.model.Tag;
 import br.com.heycheff.api.service.ReceiptService;
-import br.com.heycheff.api.util.exception.ReceitaNotFoundException;
+import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/receitas")
-public class ReceitaController {
+public class ReceiptController {
     @Autowired
     ReceiptService service;
 
@@ -35,14 +31,14 @@ public class ReceitaController {
     public ResponseEntity<ReceitaModal> loadModal(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(service.loadModal(id));
-        } catch (ReceitaNotFoundException e) {
+        } catch (ReceiptNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
     public ResponseEntity<Receipt> incluir(String titulo, String tags, MultipartFile thumb) {
-        Type listOfTags = new TypeToken<ArrayList<Tag>>() {
+        Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
         var receita = new ReceitaRequest(titulo, new Gson().fromJson(tags, listOfTags));
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(receita, thumb));

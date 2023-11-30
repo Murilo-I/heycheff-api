@@ -13,6 +13,6 @@ public class StepDTO {
 
     private String path;
     private Integer step;
-    private List<ProdutoDTO> produtos;
+    private List<ProductDTO> produtos;
     private String modoPreparo;
 }

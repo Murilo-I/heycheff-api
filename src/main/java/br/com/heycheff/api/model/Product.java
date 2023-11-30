@@ -7,8 +7,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Product {
 
-    private String descricao;
-    private Boolean auditado;
-    private UnidadeMedida unidMedida;
-    private Float qtMedida;
+    private String description;
+    private Boolean audited;
+    private String measureUnit;
+    private Float quantity;
+
+    public Product(String description, String measureUnit, Float quantity) {
+        this.description = description;
+        this.measureUnit = measureUnit;
+        this.quantity = quantity;
+    }
 }
