@@ -32,7 +32,7 @@ public class StepService {
 
     @Transactional
     public Step save(StepDTO step, MultipartFile video, Long receiptId) {
-        Receipt receipt = receiptRepository.findByIdSeq(receiptId)
+        Receipt receipt = receiptRepository.findBySeqId(receiptId)
                 .orElseThrow(ReceiptNotFoundException::new);
 
         Step savedStep = new Step(sequenceService.generateSequence(Step.STEP_SEQUENCE),
@@ -48,12 +48,13 @@ public class StepService {
                 "receitaStep_" + receiptId + "_" + savedStep.getStep()));
 
         receipt.getSteps().add(savedStep);
+        receiptRepository.save(receipt);
 
         return savedStep;
     }
 
     public void delete(Long stepId, Long receiptId) {
-        Receipt receipt = receiptRepository.findByIdSeq(receiptId).orElseThrow(ReceiptNotFoundException::new);
+        Receipt receipt = receiptRepository.findBySeqId(receiptId).orElseThrow(ReceiptNotFoundException::new);
         List<Step> steps = receipt.getSteps();
 
         Step delStep = steps.stream().filter(step -> step.getStepId().equals(stepId))

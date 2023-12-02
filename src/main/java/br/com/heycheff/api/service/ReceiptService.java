@@ -34,13 +34,13 @@ public class ReceiptService {
         List<ReceiptFeed> receiptFeed = new ArrayList<>();
 
         receipts.forEach(r -> receiptFeed
-                .add(new ReceiptFeed(r.getIdSeq(), resolve(r.getThumb()), r.getTitle())));
+                .add(new ReceiptFeed(r.getSeqId(), resolve(r.getThumb()), r.getTitle())));
 
         return receiptFeed;
     }
 
     public ReceitaModal loadModal(Long id) {
-        Receipt receipt = receiptRepository.findByIdSeq(id).orElseThrow(ReceiptNotFoundException::new);
+        Receipt receipt = receiptRepository.findBySeqId(id).orElseThrow(ReceiptNotFoundException::new);
         List<StepDTO> steps = new ArrayList<>();
 
         receipt.getSteps().forEach(step -> {
@@ -64,20 +64,20 @@ public class ReceiptService {
 
     @Transactional
     public Receipt save(ReceitaRequest request, MultipartFile thumb) {
-        Receipt receipt = receiptRepository.save(new Receipt(request.getTitulo(),
-                LocalDateTime.now()));
-
-        receipt.setThumb(fileService.salvar(thumb, "thumbReceita" + receipt.getIdSeq()));
+        Receipt receipt = new Receipt(request.getTitulo(), LocalDateTime.now());
+        receipt.setSeqId(sequenceService.generateSequence(Receipt.RECEIPT_SEQUENCE));
         receipt.setTags(request.getTags().stream().map(TagDTO::toEntity).toList());
-        receipt.setIdSeq(sequenceService.generateSequence(Receipt.RECEIPT_SEQUENCE));
+        receipt.setThumb(fileService.salvar(thumb, "thumbReceita" + receipt.getSeqId()));
 
-        return receipt;
+        return receiptRepository.save(receipt);
     }
 
     @Transactional
     public void updateStatus(ReceitaStatusDTO dto, Long id) {
-        receiptRepository.findByIdSeq(id).orElseThrow(ReceiptNotFoundException::new)
-                .setStatus(dto.getStatus());
+        Receipt receipt = receiptRepository.findBySeqId(id)
+                .orElseThrow(ReceiptNotFoundException::new);
+        receipt.setStatus(dto.getStatus());
+        receiptRepository.save(receipt);
     }
 
     private String resolve(String path) {

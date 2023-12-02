@@ -10,5 +10,5 @@ public interface ReceiptRepository extends MongoRepository<Receipt, String> {
 
     List<Receipt> findByStatus(boolean status);
 
-    Optional<Receipt> findByIdSeq(Long id);
+    Optional<Receipt> findBySeqId(Long id);
 }

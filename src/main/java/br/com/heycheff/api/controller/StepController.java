@@ -24,12 +24,12 @@ public class StepController {
 
     @PostMapping
     public ResponseEntity<Step> save(Integer step, String modoPreparo,
-                                     String products,
+                                     String produtos,
                                      MultipartFile video,
                                      @PathVariable Long id) {
         Type listOfProducts = new TypeToken<ArrayList<ProductDTO>>() {
         }.getType();
-        var dto = new StepDTO(null, step, new Gson().fromJson(products, listOfProducts), modoPreparo);
+        var dto = new StepDTO(null, step, new Gson().fromJson(produtos, listOfProducts), modoPreparo);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(dto, video, id));
     }
 

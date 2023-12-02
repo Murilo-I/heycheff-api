@@ -20,16 +20,18 @@ public class Receipt {
 
     @Id
     private String id;
-    private Long idSeq;
+    private Long seqId;
     private String thumb;
     private String title;
     private LocalDateTime dateTime;
     private Boolean status = false;
-    private List<Step> steps = Collections.emptyList();
-    private List<Integer> tags = Collections.emptyList();
+    private List<Step> steps;
+    private List<Integer> tags;
 
     public Receipt(String title, LocalDateTime dateTime) {
         this.title = title;
         this.dateTime = dateTime;
+        this.steps = Collections.emptyList();
+        this.tags = Collections.emptyList();
     }
 }

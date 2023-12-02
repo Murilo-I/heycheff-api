@@ -25,7 +25,7 @@ public class TagService {
     }
 
     public List<TagDTO> findByReceiptId(Long id) {
-        return repository.findByIdSeq(id).orElseThrow(ReceiptNotFoundException::new)
+        return repository.findBySeqId(id).orElseThrow(ReceiptNotFoundException::new)
                 .getTags().stream().map(mapper::fromEntity).toList();
     }
 }
