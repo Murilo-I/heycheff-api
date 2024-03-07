@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -39,13 +40,11 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests()
-                .requestMatchers("/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and().cors(Customizer.withDefaults())
-                .csrf().disable()
+        return http.authorizeHttpRequests(httpCustomizer -> httpCustomizer
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated())
+                .cors(Customizer.withDefaults())
+                .csrf(CsrfConfigurer::disable)
                 .build();
     }
 }
