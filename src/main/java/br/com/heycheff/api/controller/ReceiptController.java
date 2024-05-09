@@ -37,7 +37,7 @@ public class ReceiptController {
     }
 
     @PostMapping
-    public ResponseEntity<Receipt> incluir(String titulo, String tags, MultipartFile thumb) {
+    public ResponseEntity<Receipt> include(String titulo, String tags, MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
         var receita = new ReceitaRequest(titulo, new Gson().fromJson(tags, listOfTags));
@@ -46,8 +46,8 @@ public class ReceiptController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizaStatus(@RequestBody ReceitaStatusDTO status,
-                               @PathVariable Long id) {
+    public void updateStatus(@RequestBody ReceitaStatusDTO status,
+                             @PathVariable Long id) {
         service.updateStatus(status, id);
     }
 }

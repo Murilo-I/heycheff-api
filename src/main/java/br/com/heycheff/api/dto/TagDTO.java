@@ -2,7 +2,7 @@ package br.com.heycheff.api.dto;
 
 import br.com.heycheff.api.model.Tags;
 import br.com.heycheff.api.util.exception.TagNotFoundException;
-import br.com.heycheff.api.util.map.EntityMapper;
+import br.com.heycheff.api.util.mapper.EntityMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

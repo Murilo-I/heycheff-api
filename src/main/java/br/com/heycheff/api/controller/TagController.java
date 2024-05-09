@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/tags")
@@ -20,7 +21,7 @@ public class TagController {
 
     @GetMapping
     public ResponseEntity<List<TagDTO>> list(@RequestParam(required = false) Long receiptId) {
-        if (receiptId == null) return ResponseEntity.ok(service.listAll());
+        if (Objects.isNull(receiptId)) return ResponseEntity.ok(service.listAll());
         else return ResponseEntity.ok(service.findByReceiptId(receiptId));
     }
 }

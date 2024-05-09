@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class MediaController {
 
     @Autowired
-    private FileService service;
+    FileService service;
 
     @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public @ResponseBody Resource getMedia(@RequestParam String path) {

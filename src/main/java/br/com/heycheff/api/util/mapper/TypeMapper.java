@@ -1,4 +1,4 @@
-package br.com.heycheff.api.util.map;
+package br.com.heycheff.api.util.mapper;
 
 import br.com.heycheff.api.dto.ProductDTO;
 import br.com.heycheff.api.dto.ProductDescDTO;

@@ -4,7 +4,7 @@ import br.com.heycheff.api.dto.TagDTO;
 import br.com.heycheff.api.model.Tags;
 import br.com.heycheff.api.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
-import br.com.heycheff.api.util.map.TypeMapper;
+import br.com.heycheff.api.util.mapper.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +15,9 @@ import java.util.List;
 public class TagService {
 
     @Autowired
-    private ReceiptRepository repository;
+    ReceiptRepository repository;
     @Autowired
-    private TypeMapper mapper;
+    TypeMapper mapper;
 
     public List<TagDTO> listAll() {
         return Arrays.stream(Tags.values()).map(tag -> new TagDTO(tag.getId(), tag.getTag()))

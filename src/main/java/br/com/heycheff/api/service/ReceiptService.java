@@ -4,7 +4,7 @@ import br.com.heycheff.api.dto.*;
 import br.com.heycheff.api.model.Receipt;
 import br.com.heycheff.api.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
-import br.com.heycheff.api.util.map.TypeMapper;
+import br.com.heycheff.api.util.mapper.TypeMapper;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -4,7 +4,7 @@ import br.com.heycheff.api.dto.ProductDescDTO;
 import br.com.heycheff.api.dto.UnidadeMedidaDTO;
 import br.com.heycheff.api.model.MeasureUnit;
 import br.com.heycheff.api.repository.ProductRepository;
-import br.com.heycheff.api.util.map.TypeMapper;
+import br.com.heycheff.api.util.mapper.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

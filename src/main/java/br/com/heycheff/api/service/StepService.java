@@ -53,6 +53,7 @@ public class StepService {
         return savedStep;
     }
 
+    @Transactional
     public void delete(Long stepId, Long receiptId) {
         Receipt receipt = receiptRepository.findBySeqId(receiptId).orElseThrow(ReceiptNotFoundException::new);
         List<Step> steps = receipt.getSteps();

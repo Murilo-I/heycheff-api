@@ -3,7 +3,7 @@ package br.com.heycheff.api.dto;
 import br.com.heycheff.api.model.MeasureUnit;
 import br.com.heycheff.api.model.Product;
 import br.com.heycheff.api.util.exception.MeasureUnitNotFoundException;
-import br.com.heycheff.api.util.map.EntityMapper;
+import br.com.heycheff.api.util.mapper.EntityMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
