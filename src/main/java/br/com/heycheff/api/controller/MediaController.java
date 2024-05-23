@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/media")
 public class MediaController {
 
+    final FileService service;
+
     @Autowired
-    FileService service;
+    public MediaController(FileService service) {
+        this.service = service;
+    }
 
     @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public @ResponseBody Resource getMedia(@RequestParam String path) {

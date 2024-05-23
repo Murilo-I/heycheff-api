@@ -19,8 +19,12 @@ import java.util.ArrayList;
 @RequestMapping("/receitas/{id}/steps")
 public class StepController {
 
+    final StepService service;
+
     @Autowired
-    StepService service;
+    public StepController(StepService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<Step> save(Integer step, String modoPreparo,

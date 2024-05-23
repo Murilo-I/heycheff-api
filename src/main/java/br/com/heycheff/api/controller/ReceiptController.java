@@ -19,8 +19,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/receitas")
 public class ReceiptController {
+    final ReceiptService service;
+
     @Autowired
-    ReceiptService service;
+    public ReceiptController(ReceiptService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity<List<ReceiptFeed>> loadFeed() {

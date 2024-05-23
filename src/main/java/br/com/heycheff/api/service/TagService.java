@@ -14,10 +14,14 @@ import java.util.List;
 @Service
 public class TagService {
 
+    final ReceiptRepository repository;
+    final TypeMapper mapper;
+
     @Autowired
-    ReceiptRepository repository;
-    @Autowired
-    TypeMapper mapper;
+    public TagService(ReceiptRepository repository, TypeMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     public List<TagDTO> listAll() {
         return Arrays.stream(Tags.values()).map(tag -> new TagDTO(tag.getId(), tag.getTag()))

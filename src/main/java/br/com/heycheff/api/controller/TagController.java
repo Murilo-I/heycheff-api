@@ -16,8 +16,12 @@ import java.util.Objects;
 @RequestMapping("/tags")
 public class TagController {
 
+    final TagService service;
+
     @Autowired
-    TagService service;
+    public TagController(TagService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity<List<TagDTO>> list(@RequestParam(required = false) Long receiptId) {

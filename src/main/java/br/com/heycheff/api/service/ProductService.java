@@ -16,10 +16,14 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
 
+    final ProductRepository repository;
+    final TypeMapper mapper;
+
     @Autowired
-    ProductRepository repository;
-    @Autowired
-    TypeMapper mapper;
+    public ProductService(ProductRepository repository, TypeMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     public Set<ProductDescDTO> listProducts() {
         return repository.findAll().stream().map(mapper::fromEntity)

@@ -14,8 +14,12 @@ import java.util.Set;
 @RequestMapping("/produtos")
 public class ProductController {
 
+    final ProductService service;
+
     @Autowired
-    ProductService service;
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity<Set<ProductDescDTO>> listAll() {

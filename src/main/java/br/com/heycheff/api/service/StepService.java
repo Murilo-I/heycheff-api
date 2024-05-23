@@ -21,14 +21,19 @@ public class StepService {
     private static final String STEP_NOT_IN_RECEIPT_MESSAGE =
             "O Step de ID: %d não existe para a receita de ID: %d";
 
+    final ReceiptRepository receiptRepository;
+    final ProductRepository productRepository;
+    final FileService fileService;
+    final SequenceGeneratorService sequenceService;
+
     @Autowired
-    ReceiptRepository receiptRepository;
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    FileService fileService;
-    @Autowired
-    SequenceGeneratorService sequenceService;
+    public StepService(ReceiptRepository receiptRepository, ProductRepository productRepository,
+                       FileService fileService, SequenceGeneratorService sequenceService) {
+        this.receiptRepository = receiptRepository;
+        this.productRepository = productRepository;
+        this.fileService = fileService;
+        this.sequenceService = sequenceService;
+    }
 
     @Transactional
     public Step save(StepDTO step, MultipartFile video, Long receiptId) {

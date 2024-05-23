@@ -18,16 +18,21 @@ import java.util.List;
 @Service
 public class ReceiptService {
 
+    final ReceiptRepository receiptRepository;
+    final FileService fileService;
+    final ServletContext context;
+    final SequenceGeneratorService sequenceService;
+    final TypeMapper mapper;
+
     @Autowired
-    ReceiptRepository receiptRepository;
-    @Autowired
-    FileService fileService;
-    @Autowired
-    ServletContext context;
-    @Autowired
-    SequenceGeneratorService sequenceService;
-    @Autowired
-    TypeMapper mapper;
+    public ReceiptService(ReceiptRepository receiptRepository, FileService fileService, ServletContext context,
+                          SequenceGeneratorService sequenceService, TypeMapper mapper) {
+        this.receiptRepository = receiptRepository;
+        this.fileService = fileService;
+        this.context = context;
+        this.sequenceService = sequenceService;
+        this.mapper = mapper;
+    }
 
     public List<ReceiptFeed> loadFeed() {
         List<Receipt> receipts = receiptRepository.findByStatus(true);

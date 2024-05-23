@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/produtos/{id}/medidas")
 public class MeasureUnitController {
 
+    final ProductService service;
+
     @Autowired
-    ProductService service;
+    public MeasureUnitController(ProductService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity<List<UnidadeMedidaDTO>> list(@PathVariable(name = "id") Integer produtoId) {
