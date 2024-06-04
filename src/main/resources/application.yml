@@ -29,9 +29,9 @@ spring:
   servlet:
     multipart:
       max-file-size: 20MB
-      max-request-size: 20MB
+      max-request-size: 24MB
 
-media-base-path: "C:\\heycheff\\media"
+media-server-paths: C:\\heycheff\\media, /bin/heycheff/media
 
 cors:
   allowed-origins: http://localhost:4200, http://localhost:3000

@@ -1,7 +1,6 @@
 package br.com.heycheff.api.controller;
 
 import br.com.heycheff.api.service.FileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,6 @@ public class MediaController {
 
     final FileService service;
 
-    @Autowired
     public MediaController(FileService service) {
         this.service = service;
     }

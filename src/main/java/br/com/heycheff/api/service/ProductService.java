@@ -1,11 +1,10 @@
 package br.com.heycheff.api.service;
 
 import br.com.heycheff.api.dto.ProductDescDTO;
-import br.com.heycheff.api.dto.UnidadeMedidaDTO;
+import br.com.heycheff.api.dto.MeasureUnitDTO;
 import br.com.heycheff.api.model.MeasureUnit;
 import br.com.heycheff.api.repository.ProductRepository;
 import br.com.heycheff.api.util.mapper.TypeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -18,7 +17,6 @@ public class ProductService {
 
     final ProductRepository repository;
 
-    @Autowired
     public ProductService(ProductRepository repository) {
         this.repository = repository;
     }
@@ -28,7 +26,7 @@ public class ProductService {
                 .collect(Collectors.toSet());
     }
 
-    public List<UnidadeMedidaDTO> listMeasureUnits() {
+    public List<MeasureUnitDTO> listMeasureUnits() {
         return Arrays.stream(MeasureUnit.values()).map(TypeMapper::fromMeasureUnit).toList();
     }
 }

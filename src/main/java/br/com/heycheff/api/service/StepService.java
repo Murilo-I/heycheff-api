@@ -10,7 +10,6 @@ import br.com.heycheff.api.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import br.com.heycheff.api.util.exception.StepNotInReceiptException;
 import br.com.heycheff.api.util.mapper.TypeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +27,6 @@ public class StepService {
     final FileService fileService;
     final SequenceGeneratorService sequenceService;
 
-    @Autowired
     public StepService(ReceiptRepository receiptRepository, ProductRepository productRepository,
                        FileService fileService, SequenceGeneratorService sequenceService) {
         this.receiptRepository = receiptRepository;

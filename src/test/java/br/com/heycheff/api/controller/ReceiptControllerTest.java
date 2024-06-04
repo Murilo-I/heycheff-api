@@ -1,7 +1,7 @@
 package br.com.heycheff.api.controller;
 
 import br.com.heycheff.api.dto.ReceiptFeed;
-import br.com.heycheff.api.dto.ReceitaModal;
+import br.com.heycheff.api.dto.ReceiptModal;
 import br.com.heycheff.api.dto.StepDTO;
 import br.com.heycheff.api.dto.TagDTO;
 import br.com.heycheff.api.service.ReceiptService;
@@ -65,8 +65,8 @@ class ReceiptControllerTest {
                 .andExpect(jsonPath("$.steps[0].modoPreparo", is("prepare")));
     }
 
-    private ReceitaModal modal() {
-        var modal = new ReceitaModal();
+    private ReceiptModal modal() {
+        var modal = new ReceiptModal();
         modal.setTags(List.of(new TagDTO(1, "tag")));
         modal.setSteps(List.of(new StepDTO("path", 1, emptyList(), "prepare")));
         return modal;

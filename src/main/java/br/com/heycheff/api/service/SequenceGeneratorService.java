@@ -1,7 +1,6 @@
 package br.com.heycheff.api.service;
 
 import br.com.heycheff.api.model.Sequences;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ public class SequenceGeneratorService {
 
     final MongoOperations mongoOperations;
 
-    @Autowired
     public SequenceGeneratorService(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
     }

@@ -4,7 +4,6 @@ import br.com.heycheff.api.dto.StepDTO;
 import br.com.heycheff.api.dto.StepRequest;
 import br.com.heycheff.api.model.Step;
 import br.com.heycheff.api.service.StepService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,6 @@ public class StepController {
 
     final StepService service;
 
-    @Autowired
     public StepController(StepService service) {
         this.service = service;
     }

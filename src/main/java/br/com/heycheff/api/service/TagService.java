@@ -5,7 +5,6 @@ import br.com.heycheff.api.model.Tags;
 import br.com.heycheff.api.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import br.com.heycheff.api.util.mapper.TypeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -16,7 +15,6 @@ public class TagService {
 
     final ReceiptRepository repository;
 
-    @Autowired
     public TagService(ReceiptRepository repository) {
         this.repository = repository;
     }

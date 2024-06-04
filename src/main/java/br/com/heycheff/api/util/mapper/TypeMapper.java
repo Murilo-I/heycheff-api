@@ -28,8 +28,8 @@ public interface TypeMapper {
         return new ProductDescDTO(product.getValue());
     }
 
-    static UnidadeMedidaDTO fromMeasureUnit(MeasureUnit measureUnit) {
-        return new UnidadeMedidaDTO(measureUnit.getDescription());
+    static MeasureUnitDTO fromMeasureUnit(MeasureUnit measureUnit) {
+        return new MeasureUnitDTO(measureUnit.getDescription());
     }
 
     static StepDTO fromStepRequest(StepRequest request) {

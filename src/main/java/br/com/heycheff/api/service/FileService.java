@@ -16,16 +16,21 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 @Service
 public class FileService {
 
-    @Value("${media-base-path}")
-    String basePath;
+    private static final String OS_NAME = "os.name";
+    private static final String WINDOWS = "Windows";
+
+    @Value("${media-server-paths}")
+    List<String> serverPaths;
 
     final ServletContext context;
+    private String basePath;
 
     public FileService(ServletContext context) {
         this.context = context;
@@ -33,7 +38,7 @@ public class FileService {
 
     public String salvar(MultipartFile file, String fileName) {
         try {
-            Path baseDir = Paths.get(basePath);
+            Path baseDir = Paths.get(getBasePath());
             String pathToSave = fileName + "." +
                     Objects.requireNonNull(file.getContentType()).split("/")[1];
             Path filePath = baseDir.resolve(pathToSave);
@@ -49,7 +54,7 @@ public class FileService {
     }
 
     public Resource getMedia(String fileName) {
-        Path baseDir = Paths.get(basePath);
+        Path baseDir = Paths.get(getBasePath());
         Path filePath = baseDir.resolve(fileName);
 
         try {
@@ -64,7 +69,7 @@ public class FileService {
     }
 
     public void delete(String fileName) {
-        Path baseDir = Paths.get(basePath);
+        Path baseDir = Paths.get(getBasePath());
         Path filePath = baseDir.resolve(fileName);
 
         try {
@@ -78,5 +83,15 @@ public class FileService {
 
     public String resolve(String path) {
         return context.getContextPath() + "/media?path=" + path;
+    }
+
+    private String getBasePath() {
+        if (Objects.isNull(basePath)) {
+            if (System.getProperty(OS_NAME).startsWith(WINDOWS))
+                this.basePath = serverPaths.get(0);
+            else
+                this.basePath = serverPaths.get(1);
+        }
+        return basePath;
     }
 }

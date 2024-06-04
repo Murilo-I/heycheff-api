@@ -1,7 +1,7 @@
 package br.com.heycheff.api.service;
 
-import br.com.heycheff.api.dto.ReceitaRequest;
-import br.com.heycheff.api.dto.ReceitaStatusDTO;
+import br.com.heycheff.api.dto.ReceiptRequest;
+import br.com.heycheff.api.dto.ReceiptStatus;
 import br.com.heycheff.api.dto.TagDTO;
 import br.com.heycheff.api.model.Receipt;
 import br.com.heycheff.api.model.Step;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +51,7 @@ public class ReceiptServiceTest {
     }
 
     public static Receipt receipt() {
-        var receipt = new Receipt(SCRAMBLED_EGGS, LocalDateTime.now());
+        var receipt = new Receipt(SCRAMBLED_EGGS);
         var steps = new ArrayList<Step>();
         steps.add(step());
         receipt.setSteps(steps);
@@ -95,8 +94,8 @@ public class ReceiptServiceTest {
         assertEquals(expected, receipt);
     }
 
-    ReceitaRequest request() {
-        return new ReceitaRequest(SCRAMBLED_EGGS,
+    ReceiptRequest request() {
+        return new ReceiptRequest(SCRAMBLED_EGGS,
                 Collections.singletonList(new TagDTO(1, "salgado")));
     }
 
@@ -122,7 +121,7 @@ public class ReceiptServiceTest {
         verify(repository, times(0)).save(any());
     }
 
-    ReceitaStatusDTO status() {
-        return new ReceitaStatusDTO(true);
+    ReceiptStatus status() {
+        return new ReceiptStatus(true);
     }
 }

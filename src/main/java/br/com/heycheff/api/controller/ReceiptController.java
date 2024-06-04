@@ -6,7 +6,6 @@ import br.com.heycheff.api.service.ReceiptService;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,6 @@ import java.util.List;
 public class ReceiptController {
     final ReceiptService service;
 
-    @Autowired
     public ReceiptController(ReceiptService service) {
         this.service = service;
     }
@@ -32,7 +30,7 @@ public class ReceiptController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReceitaModal> loadModal(@PathVariable Long id) {
+    public ResponseEntity<ReceiptModal> loadModal(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(service.loadModal(id));
         } catch (ReceiptNotFoundException e) {
@@ -40,17 +38,22 @@ public class ReceiptController {
         }
     }
 
+    @GetMapping("/{id}/next-step")
+    public ResponseEntity<ReceiptNextStep> nextStep(@PathVariable Long id) {
+        return ResponseEntity.ok(service.nextStep(id));
+    }
+
     @PostMapping
     public ResponseEntity<Receipt> include(String titulo, String tags, MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
-        var receita = new ReceitaRequest(titulo, new Gson().fromJson(tags, listOfTags));
+        var receita = new ReceiptRequest(titulo, new Gson().fromJson(tags, listOfTags));
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(receita, thumb));
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStatus(@RequestBody ReceitaStatusDTO status,
+    public void updateStatus(@RequestBody ReceiptStatus status,
                              @PathVariable Long id) {
         service.updateStatus(status, id);
     }
