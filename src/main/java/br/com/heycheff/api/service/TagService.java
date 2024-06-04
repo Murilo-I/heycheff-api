@@ -15,12 +15,10 @@ import java.util.List;
 public class TagService {
 
     final ReceiptRepository repository;
-    final TypeMapper mapper;
 
     @Autowired
-    public TagService(ReceiptRepository repository, TypeMapper mapper) {
+    public TagService(ReceiptRepository repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     public List<TagDTO> listAll() {
@@ -30,6 +28,6 @@ public class TagService {
 
     public List<TagDTO> findByReceiptId(Long id) {
         return repository.findBySeqId(id).orElseThrow(ReceiptNotFoundException::new)
-                .getTags().stream().map(mapper::fromEntity).toList();
+                .getTags().stream().map(TypeMapper::fromTagId).toList();
     }
 }

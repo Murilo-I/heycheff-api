@@ -33,6 +33,7 @@ public class StepServiceTest {
     static final String UNID_MEDIDA = MeasureUnit.UNIDADE.getDescription();
     static final float MEDIDA = 3f;
     static final String PREPARE_MODE = "prepare mode";
+    static final Integer STEP_NUMBER = 1;
 
     @Autowired
     StepService stepService;
@@ -63,7 +64,7 @@ public class StepServiceTest {
     }
 
     StepDTO dto() {
-        return new StepDTO(PATH, 1, List.of(
+        return new StepDTO(PATH, STEP_NUMBER, List.of(
                 new ProductDTO(DESC, UNID_MEDIDA, MEDIDA),
                 new ProductDTO(DESC, UNID_MEDIDA, MEDIDA)
         ), PREPARE_MODE);
@@ -78,14 +79,15 @@ public class StepServiceTest {
     @Test
     void deleteStepSuccessfully() {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.of(receipt()));
+        when(receiptRepository.save(any())).thenReturn(receipt());
         doNothing().when(fileService).delete(anyString());
-        assertDoesNotThrow(() -> stepService.delete(ID, ID));
+        assertDoesNotThrow(() -> stepService.delete(STEP_NUMBER, ID));
     }
 
     @Test
     void throwReceiptNotFoundExceptionWhenDeletingStep() {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-        assertThrows(ReceiptNotFoundException.class, () -> stepService.delete(ID, ID));
+        assertThrows(ReceiptNotFoundException.class, () -> stepService.delete(STEP_NUMBER, ID));
     }
 
     @Test
@@ -93,13 +95,13 @@ public class StepServiceTest {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.of(receipt()));
 
         var exception = assertThrows(StepNotInReceiptException.class,
-                () -> stepService.delete(2L, ID));
+                () -> stepService.delete(2, ID));
 
         assertEquals("O Step de ID: 2 não existe para a receita de ID: 1", exception.getMessage());
     }
 
     public static Step step() {
-        var step = new Step(1L, 1, SCRAMBLED_EGGS);
+        var step = new Step(1L, STEP_NUMBER, SCRAMBLED_EGGS);
         step.setProducts(List.of(
                 new Product("ovo", UNID_MEDIDA, MEDIDA),
                 new Product("sal", MeasureUnit.GRAMA.getDescription(), .5f)

@@ -9,14 +9,16 @@ import br.com.heycheff.api.repository.ProductRepository;
 import br.com.heycheff.api.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import br.com.heycheff.api.util.exception.StepNotInReceiptException;
+import br.com.heycheff.api.util.mapper.TypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.Comparator;
 
 @Service
+@Transactional
 public class StepService {
     private static final String STEP_NOT_IN_RECEIPT_MESSAGE =
             "O Step de ID: %d não existe para a receita de ID: %d";
@@ -35,22 +37,20 @@ public class StepService {
         this.sequenceService = sequenceService;
     }
 
-    @Transactional
+    public StepDTO getStep(Integer stepNumber, Long receiptId) {
+        var receipt = validateReceipt(receiptId);
+        var step = validateStep(stepNumber, receipt);
+        return TypeMapper.fromStepEntity(step, fileService.resolve(step.getPath()));
+    }
+
     public Step save(StepDTO step, MultipartFile video, Long receiptId) {
-        Receipt receipt = receiptRepository.findBySeqId(receiptId)
-                .orElseThrow(ReceiptNotFoundException::new);
+        var receipt = validateReceipt(receiptId);
+        var savedStep = new Step(sequenceService.generateSequence(Step.STEP_SEQUENCE),
+                step.getStepNumber(), step.getModoPreparo());
 
-        Step savedStep = new Step(sequenceService.generateSequence(Step.STEP_SEQUENCE),
-                step.getStep(), step.getModoPreparo());
-
-        savedStep.setProducts(step.getProdutos().stream().map(ProductDTO::toEntity).toList());
-        step.getProdutos().forEach(product -> {
-            if (productRepository.findByValue(product.getDesc()).isEmpty())
-                productRepository.save(new ProductDescriptions(product.getDesc()));
-        });
-
+        setProducts(step, savedStep);
         savedStep.setPath(fileService.salvar(video,
-                "receitaStep_" + receiptId + "_" + savedStep.getStep()));
+                "receitaStep_" + receiptId + "_" + savedStep.getStepNumber()));
 
         receipt.getSteps().add(savedStep);
         receiptRepository.save(receipt);
@@ -58,17 +58,51 @@ public class StepService {
         return savedStep;
     }
 
-    @Transactional
-    public void delete(Long stepId, Long receiptId) {
-        Receipt receipt = receiptRepository.findBySeqId(receiptId).orElseThrow(ReceiptNotFoundException::new);
-        List<Step> steps = receipt.getSteps();
-
-        Step delStep = steps.stream().filter(step -> step.getStepId().equals(stepId))
-                .findFirst().orElseThrow(() -> new StepNotInReceiptException(
-                        String.format(STEP_NOT_IN_RECEIPT_MESSAGE, stepId, receiptId)
-                ));
+    public Step delete(Integer stepNumber, Long receiptId) {
+        var receipt = validateReceipt(receiptId);
+        var delStep = validateStep(stepNumber, receipt);
 
         fileService.delete(delStep.getPath());
-        steps.remove(delStep);
+        receipt.getSteps().remove(delStep);
+        receiptRepository.save(receipt);
+
+        return delStep;
+    }
+
+    public Step update(StepDTO step, MultipartFile video, Integer stepNumber, Long receiptId) {
+        var updStep = delete(stepNumber, receiptId);
+        var receipt = validateReceipt(receiptId);
+        var steps = receipt.getSteps();
+
+        setProducts(step, updStep);
+        updStep.setStepNumber(step.getStepNumber());
+        updStep.setPreparationMode(step.getModoPreparo());
+        updStep.setPath(fileService.salvar(video,
+                "receitaStep_" + receiptId + "_" + updStep.getStepNumber()));
+
+        steps.add(updStep);
+        receipt.setSteps(steps.stream().sorted(Comparator
+                .comparing(Step::getStepNumber)).toList());
+        receiptRepository.save(receipt);
+        return updStep;
+    }
+
+    private Receipt validateReceipt(Long receiptId) {
+        return receiptRepository.findBySeqId(receiptId).orElseThrow(ReceiptNotFoundException::new);
+    }
+
+    private Step validateStep(Integer stepNumber, Receipt receipt) {
+        return receipt.getSteps().stream().filter(step -> step.getStepNumber().equals(stepNumber))
+                .findFirst().orElseThrow(() -> new StepNotInReceiptException(
+                        String.format(STEP_NOT_IN_RECEIPT_MESSAGE, stepNumber, receipt.getSeqId())
+                ));
+    }
+
+    private void setProducts(StepDTO stepDto, Step stepEntity) {
+        stepEntity.setProducts(stepDto.getProdutos().stream().map(ProductDTO::toEntity).toList());
+        stepDto.getProdutos().forEach(product -> {
+            if (productRepository.findByValue(product.getDesc()).isEmpty())
+                productRepository.save(new ProductDescriptions(product.getDesc()));
+        });
     }
 }

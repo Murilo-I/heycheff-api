@@ -13,9 +13,7 @@ import static br.com.heycheff.api.service.ReceiptServiceTest.SCRAMBLED_EGGS;
 import static br.com.heycheff.api.service.ReceiptServiceTest.multipart;
 import static br.com.heycheff.api.service.StepServiceTest.step;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,7 +52,7 @@ class StepControllerTest {
 
     @Test
     void deleteStep() throws Exception {
-        doNothing().when(service).delete(anyLong(), anyLong());
+        when(service.delete(anyInt(), anyLong())).thenReturn(step());
         mvc.perform(delete(URL + "/1")).andExpect(status().isNoContent());
     }
 }

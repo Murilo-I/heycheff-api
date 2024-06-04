@@ -17,20 +17,18 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     final ProductRepository repository;
-    final TypeMapper mapper;
 
     @Autowired
-    public ProductService(ProductRepository repository, TypeMapper mapper) {
+    public ProductService(ProductRepository repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     public Set<ProductDescDTO> listProducts() {
-        return repository.findAll().stream().map(mapper::fromEntity)
+        return repository.findAll().stream().map(TypeMapper::fromProductDescription)
                 .collect(Collectors.toSet());
     }
 
     public List<UnidadeMedidaDTO> listMeasureUnits() {
-        return Arrays.stream(MeasureUnit.values()).map(mapper::fromEntity).toList();
+        return Arrays.stream(MeasureUnit.values()).map(TypeMapper::fromMeasureUnit).toList();
     }
 }

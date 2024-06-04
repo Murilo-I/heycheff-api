@@ -1,19 +1,15 @@
 package br.com.heycheff.api.controller;
 
-import br.com.heycheff.api.dto.ProductDTO;
 import br.com.heycheff.api.dto.StepDTO;
+import br.com.heycheff.api.dto.StepRequest;
 import br.com.heycheff.api.model.Step;
 import br.com.heycheff.api.service.StepService;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
+import static br.com.heycheff.api.util.mapper.TypeMapper.fromStepRequest;
 
 @RestController
 @RequestMapping("/receitas/{id}/steps")
@@ -26,21 +22,27 @@ public class StepController {
         this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<Step> save(Integer step, String modoPreparo,
-                                     String produtos,
-                                     MultipartFile video,
-                                     @PathVariable Long id) {
-        Type listOfProducts = new TypeToken<ArrayList<ProductDTO>>() {
-        }.getType();
-        var dto = new StepDTO(null, step, new Gson().fromJson(produtos, listOfProducts), modoPreparo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(dto, video, id));
+    @GetMapping("/{stepNumber}")
+    public ResponseEntity<StepDTO> getStep(@PathVariable Integer stepNumber, @PathVariable Long id) {
+        return ResponseEntity.ok(service.getStep(stepNumber, id));
     }
 
-    @DeleteMapping("/{stepId}")
+    @PostMapping
+    public ResponseEntity<Step> save(StepRequest request, @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.save(fromStepRequest(request), request.getVideo(), id));
+    }
+
+    @DeleteMapping("/{stepNumber}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long stepId,
-                       @PathVariable Long id) {
-        service.delete(stepId, id);
+    public void delete(@PathVariable Integer stepNumber, @PathVariable Long id) {
+        service.delete(stepNumber, id);
+    }
+
+    @PatchMapping("/{stepNumber}")
+    public ResponseEntity<Step> update(StepRequest request, @PathVariable Integer stepNumber,
+                                       @PathVariable Long id) {
+        return ResponseEntity.ok(service.update(fromStepRequest(request),
+                request.getVideo(), stepNumber, id));
     }
 }

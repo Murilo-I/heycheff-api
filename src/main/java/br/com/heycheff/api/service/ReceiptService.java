@@ -5,8 +5,6 @@ import br.com.heycheff.api.model.Receipt;
 import br.com.heycheff.api.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import br.com.heycheff.api.util.mapper.TypeMapper;
-import jakarta.servlet.ServletContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,18 +18,13 @@ public class ReceiptService {
 
     final ReceiptRepository receiptRepository;
     final FileService fileService;
-    final ServletContext context;
     final SequenceGeneratorService sequenceService;
-    final TypeMapper mapper;
 
-    @Autowired
-    public ReceiptService(ReceiptRepository receiptRepository, FileService fileService, ServletContext context,
-                          SequenceGeneratorService sequenceService, TypeMapper mapper) {
+    public ReceiptService(ReceiptRepository receiptRepository, FileService fileService,
+                          SequenceGeneratorService sequenceService) {
         this.receiptRepository = receiptRepository;
         this.fileService = fileService;
-        this.context = context;
         this.sequenceService = sequenceService;
-        this.mapper = mapper;
     }
 
     public List<ReceiptFeed> loadFeed() {
@@ -39,7 +32,10 @@ public class ReceiptService {
         List<ReceiptFeed> receiptFeed = new ArrayList<>();
 
         receipts.forEach(r -> receiptFeed
-                .add(new ReceiptFeed(r.getSeqId(), resolve(r.getThumb()), r.getTitle())));
+                .add(new ReceiptFeed(r.getSeqId(),
+                        fileService.resolve(r.getThumb()),
+                        r.getTitle())
+                ));
 
         return receiptFeed;
     }
@@ -48,17 +44,11 @@ public class ReceiptService {
         Receipt receipt = receiptRepository.findBySeqId(id).orElseThrow(ReceiptNotFoundException::new);
         List<StepDTO> steps = new ArrayList<>();
 
-        receipt.getSteps().forEach(step -> {
-            StepDTO dto = new StepDTO();
-            dto.setStep(step.getStep());
-            dto.setPath(resolve(step.getPath()));
-            dto.setModoPreparo(step.getPreparationMode());
-            dto.setProdutos(step.getProducts().stream()
-                    .map(mapper::fromEntity).toList());
-            steps.add(dto);
-        });
+        receipt.getSteps().forEach(step -> steps.add(
+                TypeMapper.fromStepEntity(step, fileService.resolve(step.getPath()))
+        ));
 
-        List<TagDTO> tags = receipt.getTags().stream().map(mapper::fromEntity).toList();
+        List<TagDTO> tags = receipt.getTags().stream().map(TypeMapper::fromTagId).toList();
 
         ReceitaModal modal = new ReceitaModal();
         modal.setSteps(steps);
@@ -83,9 +73,5 @@ public class ReceiptService {
                 .orElseThrow(ReceiptNotFoundException::new);
         receipt.setStatus(dto.getStatus());
         receiptRepository.save(receipt);
-    }
-
-    private String resolve(String path) {
-        return context.getContextPath() + "/media?path=" + path;
     }
 }
