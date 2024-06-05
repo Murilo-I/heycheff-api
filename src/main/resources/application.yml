@@ -12,20 +12,6 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/heycheff
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2
-#  datasource:
-#    url: jdbc:h2:mem:heycheffdb
-#    username: sa
-#    password: erp
-#    driverClassName: org.h2.Driver
-#  jpa:
-#    database-platform: org.hibernate.dialect.H2Dialect
-#    defer-datasource-initialization: true
-#    hibernate:
-#      ddl-auto: create-drop
   servlet:
     multipart:
       max-file-size: 20MB
@@ -35,3 +21,13 @@ media-server-paths: C:\\heycheff\\media, /bin/heycheff/media
 
 cors:
   allowed-origins: http://localhost:4200, http://localhost:3000
+
+heycheff:
+  jwt:
+    expiration: 900000
+  jwk:
+    jks-file: C:\\heycheff\\auth\\heycheff.jks, /bin/heycheff/auth/heycheff.jks
+    password:
+      key-store: ${JKS_STORE_PASS}
+      key-pass: ${JKS_KEY_PASS}
+    alias: heycheff
