@@ -97,7 +97,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.mycompany.app.App</mainClass>
+                            <mainClass>br.com.heycheff.api.HeycheffApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,4 +1,4 @@
-media-server-paths: /bin/heycheff/media
+media-server-paths: /home/heycheff/media
 
 cors:
   allowed-origins: http://localhost:3000

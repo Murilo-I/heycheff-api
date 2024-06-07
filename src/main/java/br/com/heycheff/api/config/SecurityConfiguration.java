@@ -30,9 +30,11 @@ import static org.springframework.http.HttpMethod.POST;
 @Configuration
 public class SecurityConfiguration {
 
-    private static final List<String> ALLOWED_METHODS = List.of("GET", "POST", "PUT", "PATCH", "DELETE");
+    private static final List<String> ALLOWED_METHODS = List.of("GET", "POST", "PUT", "PATCH",
+            "DELETE", "OPTIONS");
     private static final List<String> ALLOWED_HEADERS = List.of("Content-Type", "X-Requested-With",
-            "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers");
+            "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers",
+            "Authorization");
     private static final List<String> EXPOSED_HEADERS = List.of("Access-Control-Allow-Origin",
             "Access-Control-Allow-Credentials");
     private static final String[] IGNORING_MATCHERS = {"/**.html", "/v2/api-docs", "/webjars/**",

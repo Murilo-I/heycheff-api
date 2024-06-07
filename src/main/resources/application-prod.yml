@@ -17,16 +17,16 @@ spring:
       max-file-size: 20MB
       max-request-size: 24MB
 
-media-server-paths: C:\\heycheff\\media, /bin/heycheff/media
+media-server-paths: C:\\heycheff\\media, /home/heycheff/media
 
 cors:
-  allowed-origins: http://localhost:4200, http://localhost:3000
+  allowed-origins: http://179.124.193.12:3000
 
 heycheff:
   jwt:
     expiration: 900000
   jwk:
-    jks-file: C:\\heycheff\\auth\\heycheff.jks, /bin/heycheff/auth/heycheff.jks
+    jks-file: C:\\heycheff\\auth\\heycheff.jks, /home/heycheff/auth/heycheff.jks
     password:
       key-store: ${JKS_STORE_PASS}
       key-pass: ${JKS_KEY_PASS}
