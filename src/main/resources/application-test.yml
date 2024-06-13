@@ -1,0 +1,14 @@
+media-server-paths: /home/heycheff/media
+
+cors:
+  allowed-origins: http://localhost:3000
+
+heycheff:
+  jwt:
+    expiration: 900000
+  jwk:
+    jks-file: src/test/resources/heycheff.jks
+    password:
+      key-store: test_storepass
+      key-pass: test_keypass
+    alias: heycheff

@@ -1,7 +1,8 @@
 package br.com.heycheff.api.util.mapper;
 
-import br.com.heycheff.api.dto.*;
-import br.com.heycheff.api.model.*;
+import br.com.heycheff.api.app.dto.*;
+import br.com.heycheff.api.app.dto.request.StepRequest;
+import br.com.heycheff.api.data.model.*;
 import br.com.heycheff.api.util.exception.TagNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

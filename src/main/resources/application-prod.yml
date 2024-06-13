@@ -1,0 +1,33 @@
+server:
+  port: 6015
+  servlet:
+    context-path: /heycheff
+
+logging:
+  level:
+    org.springframework: ERROR
+    org.springframework.web: DEBUG
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/heycheff
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 24MB
+
+media-server-paths: C:\\heycheff\\media, /home/heycheff/media
+
+cors:
+  allowed-origins: http://179.124.193.12:3000
+
+heycheff:
+  jwt:
+    expiration: 900000
+  jwk:
+    jks-file: C:\\heycheff\\auth\\heycheff.jks, /home/heycheff/auth/heycheff.jks
+    password:
+      key-store: ${JKS_STORE_PASS}
+      key-pass: ${JKS_KEY_PASS}
+    alias: heycheff
