@@ -7,7 +7,7 @@ heycheff:
   jwt:
     expiration: 900000
   jwk:
-    jks-file: src/test/resources/heycheff.jks
+    jks-file: src/test/resources/heycheff.jks, src/test/resources/heycheff.jks
     password:
       key-store: test_storepass
       key-pass: test_keypass
