@@ -21,7 +21,7 @@ spring:
 media-server-paths: C:\\heycheff\\media, /home/heycheff/media
 
 cors:
-  allowed-origins: http://179.124.193.12:3000
+  allowed-origins: http://179.124.193.12:3000, http://heycheff.com.br:3000, heycheff.com.br:3000
 
 heycheff:
   jwt:
