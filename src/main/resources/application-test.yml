@@ -5,7 +5,7 @@ cors:
 
 heycheff:
   jwt:
-    expiration: 900000
+    expiration: 600000
   jwk:
     jks-file: src/test/resources/heycheff.jks, src/test/resources/heycheff.jks
     password:
