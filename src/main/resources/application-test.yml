@@ -1,5 +1,9 @@
 media-server-paths: /home/heycheff/media
 
+spring:
+  cache:
+    type: none
+
 cors:
   allowed-origins: http://localhost:3000
 

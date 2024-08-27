@@ -69,13 +69,13 @@ public class ReceiptService {
     }
 
     @Transactional
-    public Receipt save(ReceiptRequest request, MultipartFile thumb) {
+    public ReceiptId save(ReceiptRequest request, MultipartFile thumb) {
         Receipt receipt = new Receipt(request.getTitulo());
         receipt.setSeqId(sequenceService.generateSequence(Receipt.RECEIPT_SEQUENCE));
         receipt.setTags(request.getTags().stream().map(TagDTO::toEntity).toList());
         receipt.setThumb(fileService.salvar(thumb, "thumbReceita" + receipt.getSeqId()));
-
-        return receiptRepository.save(receipt);
+        receiptRepository.save(receipt);
+        return new ReceiptId(receipt.getSeqId());
     }
 
     @Transactional

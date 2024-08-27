@@ -4,6 +4,7 @@ import br.com.heycheff.api.app.dto.StepDTO;
 import br.com.heycheff.api.app.dto.TagDTO;
 import br.com.heycheff.api.app.dto.response.PageResponse;
 import br.com.heycheff.api.app.dto.response.ReceiptFeed;
+import br.com.heycheff.api.app.dto.response.ReceiptId;
 import br.com.heycheff.api.app.dto.response.ReceiptModal;
 import br.com.heycheff.api.app.service.ReceiptService;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
@@ -20,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static br.com.heycheff.api.app.service.ReceiptServiceTest.multipart;
-import static br.com.heycheff.api.app.service.ReceiptServiceTest.*;
+import static br.com.heycheff.api.app.service.ReceiptServiceTest.receipt;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,12 +53,14 @@ class ReceiptControllerTest {
                 );
 
         mvc.perform(get(URL)
+                        .queryParam("pageNum", String.valueOf(1))
+                        .queryParam("pageSize", String.valueOf(1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$items[0].titulo", is("title")))
-                .andExpect(jsonPath("$count", is(1L)));
+                .andExpect(jsonPath("$.items[0].titulo", is("title")))
+                .andExpect(jsonPath("$.count", is(1)));
     }
 
     @Test
@@ -94,7 +97,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void includeReceipt() throws Exception {
-        when(service.save(any(), any())).thenReturn(receipt());
+        when(service.save(any(), any())).thenReturn(new ReceiptId(receipt().getSeqId()));
 
         var formData = """
                 titulo:Camarão do Baiano
@@ -108,7 +111,7 @@ class ReceiptControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.title", is(SCRAMBLED_EGGS)));
+                .andExpect(jsonPath("$.seqId", is(1)));
     }
 
     @Test

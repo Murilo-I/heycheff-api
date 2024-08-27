@@ -87,7 +87,7 @@ public class ReceiptServiceTest {
 
         var receipt = receiptService.save(request(), multipart());
 
-        assertEquals(expected, receipt);
+        assertEquals(expected.getSeqId(), receipt.getSeqId());
     }
 
     ReceiptRequest request() {
