@@ -2,6 +2,7 @@ package br.com.heycheff.api.util.mapper;
 
 import br.com.heycheff.api.app.dto.*;
 import br.com.heycheff.api.app.dto.request.StepRequest;
+import br.com.heycheff.api.app.dto.response.ReceiptFeed;
 import br.com.heycheff.api.data.model.*;
 import br.com.heycheff.api.util.exception.TagNotFoundException;
 import com.google.gson.Gson;
@@ -44,5 +45,9 @@ public interface TypeMapper {
     static StepDTO fromStepEntity(Step step, String path) {
         return new StepDTO(path, step.getStepNumber(), step.getProducts().stream()
                 .map(TypeMapper::fromProduct).toList(), step.getPreparationMode());
+    }
+
+    static ReceiptFeed fromReceiptEntity(Receipt receipt, String thumb) {
+        return new ReceiptFeed(receipt.getSeqId(), thumb, receipt.getTitle());
     }
 }

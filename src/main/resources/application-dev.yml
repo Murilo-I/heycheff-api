@@ -32,3 +32,9 @@ heycheff:
       key-store: ${JKS_STORE_PASS}
       key-pass: ${JKS_KEY_PASS}
     alias: heycheff
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    user: ${REDIS_USER}
+    password: ${REDIS_PASSWORD}
+    ttl: 15

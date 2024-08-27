@@ -12,3 +12,9 @@ heycheff:
       key-store: test_storepass
       key-pass: test_keypass
     alias: heycheff
+  redis:
+    host: localhost
+    port: 6379
+    user: default
+    password: default
+    ttl: 15

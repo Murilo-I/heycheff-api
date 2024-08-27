@@ -1,9 +1,10 @@
 package br.com.heycheff.api.app.controller;
 
-import br.com.heycheff.api.app.dto.response.ReceiptFeed;
-import br.com.heycheff.api.app.dto.response.ReceiptModal;
 import br.com.heycheff.api.app.dto.StepDTO;
 import br.com.heycheff.api.app.dto.TagDTO;
+import br.com.heycheff.api.app.dto.response.PageResponse;
+import br.com.heycheff.api.app.dto.response.ReceiptFeed;
+import br.com.heycheff.api.app.dto.response.ReceiptModal;
 import br.com.heycheff.api.app.service.ReceiptService;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -45,15 +46,18 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void loadFeed() throws Exception {
-        when(service.loadFeed())
-                .thenReturn(List.of(new ReceiptFeed(ID, "thumb", "title")));
+        when(service.loadFeed(1, 1))
+                .thenReturn(new PageResponse<>(
+                        List.of(new ReceiptFeed(ID, "thumb", "title")), 1L)
+                );
 
         mvc.perform(get(URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].titulo", is("title")));
+                .andExpect(jsonPath("$items[0].titulo", is("title")))
+                .andExpect(jsonPath("$count", is(1L)));
     }
 
     @Test

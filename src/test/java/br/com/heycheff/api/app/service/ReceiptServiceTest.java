@@ -8,6 +8,7 @@ import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
@@ -33,13 +34,16 @@ public class ReceiptServiceTest {
 
     @Test
     void loadFeedSuccessfully() {
-        when(repository.findByStatus(anyBoolean()))
-                .thenReturn(Collections.singletonList(receipt()));
+        when(repository.findByStatus(anyBoolean(), any()))
+                .thenReturn(new PageImpl<>(
+                                Collections.singletonList(receipt())
+                        )
+                );
 
-        var feed = receiptService.loadFeed();
+        var feed = receiptService.loadFeed(1, 1);
 
-        assertFalse(feed.isEmpty());
-        assertEquals(SCRAMBLED_EGGS, feed.get(0).getTitulo());
+        assertFalse(feed.items().isEmpty());
+        assertEquals(SCRAMBLED_EGGS, feed.items().get(0).getTitulo());
     }
 
     public static Receipt receipt() {

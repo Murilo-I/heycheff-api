@@ -19,7 +19,7 @@ public class TagDTO implements EntityMapper<Integer> {
 
     @Override
     public Integer toEntity() {
-        return Arrays.stream(Tags.values()).filter(tag -> tag.getId().equals(this.id))
+        return Arrays.stream(Tags.values()).filter(value -> value.getId().equals(this.id))
                 .findFirst().orElseThrow(TagNotFoundException::new).getId();
     }
 }

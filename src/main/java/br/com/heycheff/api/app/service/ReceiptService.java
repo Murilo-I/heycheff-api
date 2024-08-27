@@ -3,15 +3,16 @@ package br.com.heycheff.api.app.service;
 import br.com.heycheff.api.app.dto.StepDTO;
 import br.com.heycheff.api.app.dto.TagDTO;
 import br.com.heycheff.api.app.dto.request.ReceiptRequest;
-import br.com.heycheff.api.app.dto.response.ReceiptFeed;
-import br.com.heycheff.api.app.dto.response.ReceiptModal;
-import br.com.heycheff.api.app.dto.response.ReceiptNextStep;
-import br.com.heycheff.api.app.dto.response.ReceiptStatus;
+import br.com.heycheff.api.app.dto.response.*;
 import br.com.heycheff.api.data.model.Receipt;
 import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
+import br.com.heycheff.api.util.constants.CacheNames;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import br.com.heycheff.api.util.mapper.TypeMapper;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static br.com.heycheff.api.util.mapper.TypeMapper.fromReceiptEntity;
 import static br.com.heycheff.api.util.mapper.TypeMapper.fromStepEntity;
 
 @Service
@@ -35,17 +37,18 @@ public class ReceiptService {
         this.sequenceService = sequenceService;
     }
 
-    public List<ReceiptFeed> loadFeed() {
-        List<Receipt> receipts = receiptRepository.findByStatus(true);
-        List<ReceiptFeed> receiptFeed = new ArrayList<>();
+    @Cacheable(value = CacheNames.FEED)
+    public PageResponse<ReceiptFeed> loadFeed(Integer pageNum, Integer pageSize) {
+        Page<Receipt> receipts = receiptRepository.findByStatus(
+                true, PageRequest.of(pageNum, pageSize)
+        );
 
-        receipts.forEach(r -> receiptFeed
-                .add(new ReceiptFeed(r.getSeqId(),
-                        fileService.resolve(r.getThumb()),
-                        r.getTitle())
-                ));
+        List<ReceiptFeed> receiptFeed = receipts.map(receipt -> fromReceiptEntity(
+                        receipt, fileService.resolve(receipt.getThumb())
+                )
+        ).getContent();
 
-        return receiptFeed;
+        return new PageResponse<>(receiptFeed, receipts.getTotalElements());
     }
 
     public ReceiptModal loadModal(Long id) {
