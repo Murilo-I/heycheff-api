@@ -9,7 +9,6 @@ import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
 import br.com.heycheff.api.util.constants.CacheNames;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
-import br.com.heycheff.api.util.mapper.TypeMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,11 +58,8 @@ public class ReceiptService {
                 fromStepEntity(step, fileService.resolve(step.getPath()))
         ));
 
-        List<TagDTO> tags = receipt.getTags().stream().map(TypeMapper::fromTagId).toList();
-
         ReceiptModal modal = new ReceiptModal();
         modal.setSteps(steps);
-        modal.setTags(tags);
 
         return modal;
     }

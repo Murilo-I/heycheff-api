@@ -17,11 +17,13 @@ public class Step {
     private String path;
     private Integer stepNumber;
     private String preparationMode;
+    private Integer timeMinutes;
     List<Product> products;
 
-    public Step(Long stepId, Integer step, String preparationMode) {
+    public Step(Long stepId, Integer step, String preparationMode, Integer timeMinutes) {
         this.stepId = stepId;
         this.stepNumber = step;
         this.preparationMode = preparationMode;
+        this.timeMinutes = timeMinutes;
     }
 }

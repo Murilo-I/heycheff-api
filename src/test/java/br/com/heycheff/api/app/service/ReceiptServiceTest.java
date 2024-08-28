@@ -64,7 +64,6 @@ public class ReceiptServiceTest {
         var modal = receiptService.loadModal(ID);
 
         assertNotNull(modal);
-        assertEquals(3, modal.getTags().size());
         assertEquals(step().getPreparationMode(), modal.getSteps().get(0).getModoPreparo());
     }
 

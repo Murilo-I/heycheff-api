@@ -4,7 +4,6 @@ import br.com.heycheff.api.app.dto.TagDTO;
 import br.com.heycheff.api.app.dto.request.ReceiptRequest;
 import br.com.heycheff.api.app.dto.response.*;
 import br.com.heycheff.api.app.service.ReceiptService;
-import br.com.heycheff.api.data.model.Receipt;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

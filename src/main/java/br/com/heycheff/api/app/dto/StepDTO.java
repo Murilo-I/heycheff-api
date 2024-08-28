@@ -15,4 +15,5 @@ public class StepDTO {
     private Integer stepNumber;
     private List<ProductDTO> produtos;
     private String modoPreparo;
+    private Integer timeMinutes;
 }
