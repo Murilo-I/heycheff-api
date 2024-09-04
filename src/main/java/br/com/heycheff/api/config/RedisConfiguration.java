@@ -20,7 +20,6 @@ import java.time.Duration;
 public class RedisConfiguration {
 
     private static final Long ONE_HOUR_TTL = 1L;
-    public static final String UNDERSCORE = "_";
 
     @Value("${heycheff.redis.host}")
     String hostname;

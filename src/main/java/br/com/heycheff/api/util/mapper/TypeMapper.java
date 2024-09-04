@@ -56,9 +56,12 @@ public interface TypeMapper {
 
     static ReceiptFeed fromReceiptEntity(Receipt receipt, String thumb) {
         var tags = receipt.getTags().stream().map(TypeMapper::fromTagId).toList();
-        var estimatedTime = receipt.getSteps().stream().map(Step::getTimeMinutes)
-                .reduce(Integer::sum).orElseThrow(ReceiptEstimatedTimeException::new);
-
+        int estimatedTime = 0;
+        try {
+            estimatedTime = receipt.getSteps().stream().map(Step::getTimeMinutes)
+                    .reduce(Integer::sum).orElseThrow(ReceiptEstimatedTimeException::new);
+        } catch (NullPointerException ignored) {
+        }
         return new ReceiptFeed(
                 receipt.getSeqId(), thumb, receipt.getTitle(), tags, estimatedTime
         );
