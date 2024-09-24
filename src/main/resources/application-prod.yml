@@ -37,4 +37,5 @@ heycheff:
     port: ${REDIS_PORT}
     user: ${REDIS_USER}
     password: ${REDIS_PASSWORD}
+    ssl: true
     ttl: 15
