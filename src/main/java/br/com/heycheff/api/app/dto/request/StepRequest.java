@@ -8,6 +8,7 @@ public class StepRequest {
 
     private Integer stepNumber;
     private String modoPreparo;
+    private Integer timeMinutes;
     private String produtos;
     private MultipartFile video;
 }

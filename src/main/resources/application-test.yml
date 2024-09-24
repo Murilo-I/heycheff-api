@@ -1,14 +1,24 @@
 media-server-paths: /home/heycheff/media
 
+spring:
+  cache:
+    type: none
+
 cors:
   allowed-origins: http://localhost:3000
 
 heycheff:
   jwt:
-    expiration: 900000
+    expiration: 600000
   jwk:
     jks-file: src/test/resources/heycheff.jks, src/test/resources/heycheff.jks
     password:
       key-store: test_storepass
       key-pass: test_keypass
     alias: heycheff
+  redis:
+    host: localhost
+    port: 6379
+    user: default
+    password: default
+    ttl: 15

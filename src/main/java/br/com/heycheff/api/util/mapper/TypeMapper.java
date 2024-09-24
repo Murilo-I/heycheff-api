@@ -2,7 +2,9 @@ package br.com.heycheff.api.util.mapper;
 
 import br.com.heycheff.api.app.dto.*;
 import br.com.heycheff.api.app.dto.request.StepRequest;
+import br.com.heycheff.api.app.dto.response.ReceiptFeed;
 import br.com.heycheff.api.data.model.*;
+import br.com.heycheff.api.util.exception.ReceiptEstimatedTimeException;
 import br.com.heycheff.api.util.exception.TagNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,12 +39,31 @@ public interface TypeMapper {
         Type listOfProducts = new TypeToken<ArrayList<ProductDTO>>() {
         }.getType();
 
-        return new StepDTO(null, request.getStepNumber(), new Gson()
-                .fromJson(request.getProdutos(), listOfProducts), request.getModoPreparo());
+        return new StepDTO(
+                null, request.getStepNumber(), new Gson()
+                .fromJson(request.getProdutos(), listOfProducts),
+                request.getModoPreparo(), request.getTimeMinutes()
+        );
     }
 
     static StepDTO fromStepEntity(Step step, String path) {
-        return new StepDTO(path, step.getStepNumber(), step.getProducts().stream()
-                .map(TypeMapper::fromProduct).toList(), step.getPreparationMode());
+        return new StepDTO(
+                path, step.getStepNumber(), step.getProducts().stream()
+                .map(TypeMapper::fromProduct).toList(), step.getPreparationMode(),
+                step.getTimeMinutes()
+        );
+    }
+
+    static ReceiptFeed fromReceiptEntity(Receipt receipt, String thumb) {
+        var tags = receipt.getTags().stream().map(TypeMapper::fromTagId).toList();
+        int estimatedTime = 0;
+        try {
+            estimatedTime = receipt.getSteps().stream().map(Step::getTimeMinutes)
+                    .reduce(Integer::sum).orElseThrow(ReceiptEstimatedTimeException::new);
+        } catch (NullPointerException ignored) {
+        }
+        return new ReceiptFeed(
+                receipt.getSeqId(), thumb, receipt.getTitle(), tags, estimatedTime
+        );
     }
 }

@@ -44,7 +44,7 @@ public class StepService {
     public Step save(StepDTO step, MultipartFile video, Long receiptId) {
         var receipt = validateReceipt(receiptId);
         var savedStep = new Step(sequenceService.generateSequence(Step.STEP_SEQUENCE),
-                step.getStepNumber(), step.getModoPreparo());
+                step.getStepNumber(), step.getModoPreparo(), step.getTimeMinutes());
 
         setProducts(step, savedStep);
         savedStep.setPath(fileService.salvar(video,

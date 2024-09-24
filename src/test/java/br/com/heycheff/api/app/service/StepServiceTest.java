@@ -58,7 +58,7 @@ public class StepServiceTest {
         return new StepDTO(PATH, STEP_NUMBER, List.of(
                 new ProductDTO(DESC, UNID_MEDIDA, MEDIDA),
                 new ProductDTO(DESC, UNID_MEDIDA, MEDIDA)
-        ), PREPARE_MODE);
+        ), PREPARE_MODE, 15);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class StepServiceTest {
     }
 
     public static Step step() {
-        var step = new Step(1L, STEP_NUMBER, ReceiptServiceTest.SCRAMBLED_EGGS);
+        var step = new Step(1L, STEP_NUMBER, ReceiptServiceTest.SCRAMBLED_EGGS, 15);
         step.setProducts(List.of(
                 new Product("ovo", UNID_MEDIDA, MEDIDA),
                 new Product("sal", MeasureUnit.GRAMA.getDescription(), .5f)
