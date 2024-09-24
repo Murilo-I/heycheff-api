@@ -78,6 +78,7 @@ public class RedisConfiguration {
             builder.withCacheConfiguration(CacheNames.TAGS, hardlyUpdatedCache);
 
             var mediaCache = RedisCacheConfiguration.defaultCacheConfig()
+                    .entryTtl(Duration.ofMinutes(defaultTTL))
                     .serializeValuesWith(RedisSerializationContext.SerializationPair
                             .fromSerializer(new ResourceRedisSerializer()));
 
