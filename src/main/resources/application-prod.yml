@@ -11,7 +11,7 @@ logging:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/heycheff
+      uri: ${MONGO_URI}
       auto-index-creation: true
   servlet:
     multipart:

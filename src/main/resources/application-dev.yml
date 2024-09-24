@@ -11,7 +11,7 @@ logging:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/heycheff
+      uri: ${MONGO_URI}
       auto-index-creation: true
   servlet:
     multipart:
@@ -21,7 +21,7 @@ spring:
 media-server-paths: C:\\heycheff\\media, /home/heycheff/media
 
 cors:
-  allowed-origins: http://localhost:4200, http://localhost:3000
+  allowed-origins: http://localhost:4200, http://localhost:3000, http://localhost:8081
 
 heycheff:
   jwt:
