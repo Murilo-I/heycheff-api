@@ -33,9 +33,9 @@ heycheff:
       key-pass: ${JKS_KEY_PASS}
     alias: heycheff
   redis:
-    host: ${AZURE_REDIS_HOST}
-    port: ${AZURE_REDIS_PORT}
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
     user: ${REDIS_USER}
-    password: ${AZURE_REDIS_KEY}
-    ssl: true
+    password: ${REDIS_PASSWORD}
+    ssl: false
     ttl: 15
