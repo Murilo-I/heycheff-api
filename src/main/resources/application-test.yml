@@ -21,4 +21,5 @@ heycheff:
     port: 6379
     user: default
     password: default
+    ssl: false
     ttl: 15

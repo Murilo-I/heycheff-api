@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -31,13 +32,23 @@ public class RedisConfiguration {
     String username;
     @Value("${heycheff.redis.password}")
     String password;
+    @Value("${heycheff.redis.ssl}")
+    boolean useSsl;
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        var redisConfig = new RedisStandaloneConfiguration(hostname, port);
-        redisConfig.setUsername(username);
-        redisConfig.setPassword(password);
-        return new JedisConnectionFactory(redisConfig);
+        var standaloneConfig = new RedisStandaloneConfiguration(hostname, port);
+        standaloneConfig.setPassword(password);
+        JedisClientConfiguration clientConfig;
+
+        if (useSsl) {
+            clientConfig = JedisClientConfiguration.builder().useSsl().build();
+        } else {
+            standaloneConfig.setUsername(username);
+            clientConfig = JedisClientConfiguration.builder().build();
+        }
+
+        return new JedisConnectionFactory(standaloneConfig, clientConfig);
     }
 
     @Bean
@@ -67,6 +78,7 @@ public class RedisConfiguration {
             builder.withCacheConfiguration(CacheNames.TAGS, hardlyUpdatedCache);
 
             var mediaCache = RedisCacheConfiguration.defaultCacheConfig()
+                    .entryTtl(Duration.ofMinutes(defaultTTL))
                     .serializeValuesWith(RedisSerializationContext.SerializationPair
                             .fromSerializer(new ResourceRedisSerializer()));
 
