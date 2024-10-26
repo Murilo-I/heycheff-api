@@ -8,6 +8,10 @@ cors:
   allowed-origins: http://localhost:3000
 
 heycheff:
+  oauth:
+    google-client-id: gClientId
+  clerk:
+    secret: secretKey
   jwt:
     expiration: 600000
   jwk:

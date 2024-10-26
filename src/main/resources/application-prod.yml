@@ -24,6 +24,10 @@ cors:
   allowed-origins: http://179.124.193.12:3000, http://heycheff.com.br:3000, heycheff.com.br:3000
 
 heycheff:
+  oauth:
+    google-client-id: ${GOOGLE_CLIENT_ID}
+  clerk:
+    secret: ${CLERK_SECRET}
   jwt:
     expiration: 1800000
   jwk:

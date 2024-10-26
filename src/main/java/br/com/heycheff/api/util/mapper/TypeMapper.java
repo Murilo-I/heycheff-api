@@ -15,6 +15,10 @@ import java.util.Arrays;
 
 public interface TypeMapper {
 
+    static UserDTO fromUser(User user) {
+        return new UserDTO(user.getUsername(), user.getPassword());
+    }
+
     static TagDTO fromTagId(Integer tagId) {
         Tags tags = Arrays.stream(Tags.values()).filter(tag -> tag.getId().equals(tagId))
                 .findFirst().orElseThrow(TagNotFoundException::new);

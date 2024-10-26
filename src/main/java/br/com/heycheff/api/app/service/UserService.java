@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -34,5 +35,9 @@ public class UserService {
         } catch (Exception e) {
             throw new UserRegistrationException(e);
         }
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return repository.findByEmail(email);
     }
 }
