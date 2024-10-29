@@ -1,4 +1,4 @@
 package br.com.heycheff.api.app.dto.response;
 
-public record ErrorMessage(String errorMessage) {
+public record ErrorMessage(String errorMessage, Status status) {
 }

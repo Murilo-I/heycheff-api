@@ -81,6 +81,7 @@ public class SecurityConfiguration {
         return http.authorizeHttpRequests(httpCustomizer -> httpCustomizer
                         .requestMatchers(POST, "/user").permitAll()
                         .requestMatchers(POST, "/auth").permitAll()
+                        .requestMatchers(POST, "/auth/clerk").permitAll()
                         .requestMatchers(GET, "/receitas").permitAll()
                         .requestMatchers(thumbsMatcher).permitAll()
                         .anyRequest().authenticated())

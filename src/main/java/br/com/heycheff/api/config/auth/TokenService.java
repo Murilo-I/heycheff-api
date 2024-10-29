@@ -27,7 +27,14 @@ public class TokenService {
     }
 
     public TokenDTO generateToken(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+        return tokenize((User) authentication.getPrincipal());
+    }
+
+    public TokenDTO generateToken(User user) {
+        return tokenize(user);
+    }
+
+    private TokenDTO tokenize(User user) {
         Date issuedDate = new Date();
         Date expirationDate = new Date(issuedDate.getTime() + Long.parseLong(expiration));
 
