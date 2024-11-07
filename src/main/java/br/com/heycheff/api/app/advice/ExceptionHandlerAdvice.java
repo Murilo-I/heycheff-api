@@ -15,6 +15,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ReceiptNotFoundException.class,
             StepNotFoundException.class,
+            UserNotFoundException.class,
             TagNotFoundException.class,
             MeasureUnitNotFoundException.class})
     public ResponseEntity<ErrorMessage> handleNotFoundException(RuntimeException exception) {

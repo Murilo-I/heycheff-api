@@ -9,6 +9,7 @@ import br.com.heycheff.api.data.repository.ReceiptRepository;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class ReceiptServiceTest {
                         )
                 );
 
-        var feed = receiptService.loadFeed(1, 1);
+        var feed = receiptService.loadFeed(PageRequest.of(1, 1));
 
         assertFalse(feed.items().isEmpty());
         assertEquals(SCRAMBLED_EGGS, feed.items().get(0).getTitulo());
