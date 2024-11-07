@@ -12,4 +12,6 @@ public interface ReceiptRepository extends MongoRepository<Receipt, String> {
     Page<Receipt> findByStatus(boolean status, Pageable pageable);
 
     Optional<Receipt> findBySeqId(Long id);
+
+    Page<Receipt> findByOwnerId(String userId, Pageable pageable);
 }

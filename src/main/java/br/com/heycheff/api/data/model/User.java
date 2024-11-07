@@ -24,6 +24,10 @@ public class User implements UserDetails {
     @Indexed(unique = true)
     private String username;
     private List<Role> roles;
+    @Getter
+    private List<String> followersIds;
+    @Getter
+    private List<String> followingIds;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

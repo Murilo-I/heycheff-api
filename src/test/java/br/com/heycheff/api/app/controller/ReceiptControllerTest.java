@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -47,7 +48,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void loadFeed() throws Exception {
-        when(service.loadFeed(1, 1))
+        when(service.loadFeed(PageRequest.of(1, 1)))
                 .thenReturn(new PageResponse<>(
                         List.of(new ReceiptFeed(
                                 ID, "thumb", "title", Collections.emptyList(), 15)

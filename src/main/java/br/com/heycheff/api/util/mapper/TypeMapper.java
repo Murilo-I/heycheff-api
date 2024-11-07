@@ -3,6 +3,7 @@ package br.com.heycheff.api.util.mapper;
 import br.com.heycheff.api.app.dto.*;
 import br.com.heycheff.api.app.dto.request.StepRequest;
 import br.com.heycheff.api.app.dto.response.ReceiptFeed;
+import br.com.heycheff.api.app.dto.response.UserResponse;
 import br.com.heycheff.api.data.model.*;
 import br.com.heycheff.api.util.exception.ReceiptEstimatedTimeException;
 import br.com.heycheff.api.util.exception.TagNotFoundException;
@@ -15,8 +16,20 @@ import java.util.Arrays;
 
 public interface TypeMapper {
 
-    static UserDTO fromUser(User user) {
-        return new UserDTO(user.getUsername(), user.getPassword());
+    static UserResponse fromUser(User user, Long receiptsCount) {
+        int followers = 0;
+        int following = 0;
+        try {
+            followers = user.getFollowersIds().size();
+            following = user.getFollowingIds().size();
+        } catch (NullPointerException ignored) {
+        }
+        return UserResponse.builder()
+                .username(user.getUsername())
+                .followers(followers)
+                .following(following)
+                .receiptsCount(receiptsCount)
+                .build();
     }
 
     static TagDTO fromTagId(Integer tagId) {

@@ -7,6 +7,7 @@ import br.com.heycheff.api.app.service.ReceiptService;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/receitas")
@@ -26,8 +28,14 @@ public class ReceiptController {
 
     @GetMapping
     public ResponseEntity<PageResponse<ReceiptFeed>> loadFeed(@RequestParam Integer pageNum,
-                                                              @RequestParam Integer pageSize) {
-        return ResponseEntity.ok(service.loadFeed(pageNum, pageSize));
+                                                              @RequestParam Integer pageSize,
+                                                              @RequestParam(required = false)
+                                                              String userId) {
+        var pageRequest = PageRequest.of(pageNum, pageSize);
+        if (Objects.isNull(userId))
+            return ResponseEntity.ok(service.loadFeed(pageRequest));
+
+        return ResponseEntity.ok(service.loadUserContent(pageRequest, userId));
     }
 
     @GetMapping("/{id}")

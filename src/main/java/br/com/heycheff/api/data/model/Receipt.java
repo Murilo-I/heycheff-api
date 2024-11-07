@@ -25,6 +25,7 @@ public class Receipt {
     private String title;
     private LocalDateTime dateTime;
     private Boolean status = false;
+    private String ownerId;
     private List<Step> steps;
     private List<Integer> tags;
 

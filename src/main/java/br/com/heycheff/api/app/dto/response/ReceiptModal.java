@@ -8,5 +8,6 @@ import java.util.List;
 @Data
 public class ReceiptModal {
 
+    private String userId;
     private List<StepDTO> steps;
 }

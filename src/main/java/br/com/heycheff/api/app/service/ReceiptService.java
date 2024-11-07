@@ -37,17 +37,23 @@ public class ReceiptService {
     }
 
     @Cacheable(value = CacheNames.FEED)
-    public PageResponse<ReceiptFeed> loadFeed(Integer pageNum, Integer pageSize) {
-        Page<Receipt> receipts = receiptRepository.findByStatus(
-                true, PageRequest.of(pageNum, pageSize)
-        );
+    public PageResponse<ReceiptFeed> loadFeed(PageRequest pageRequest) {
+        Page<Receipt> receipts = receiptRepository.findByStatus(true, pageRequest);
+        var receiptFeed = mapReceipts(receipts);
+        return new PageResponse<>(receiptFeed, receipts.getTotalElements());
+    }
 
-        List<ReceiptFeed> receiptFeed = receipts.map(receipt -> fromReceiptEntity(
+    public PageResponse<ReceiptFeed> loadUserContent(PageRequest pageRequest, String userId) {
+        Page<Receipt> receipts = receiptRepository.findByOwnerId(userId, pageRequest);
+        var userReceipts = mapReceipts(receipts);
+        return new PageResponse<>(userReceipts, receipts.getTotalElements());
+    }
+
+    private List<ReceiptFeed> mapReceipts(Page<Receipt> receipts) {
+        return receipts.map(receipt -> fromReceiptEntity(
                         receipt, fileService.resolve(receipt.getThumb())
                 )
         ).getContent();
-
-        return new PageResponse<>(receiptFeed, receipts.getTotalElements());
     }
 
     public ReceiptModal loadModal(Long id) {
@@ -59,6 +65,7 @@ public class ReceiptService {
         ));
 
         ReceiptModal modal = new ReceiptModal();
+        modal.setUserId(receipt.getOwnerId());
         modal.setSteps(steps);
 
         return modal;
