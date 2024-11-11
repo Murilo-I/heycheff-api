@@ -1,5 +1,6 @@
 package br.com.heycheff.api.app.service;
 
+import br.com.heycheff.api.app.usecase.FileUseCase;
 import br.com.heycheff.api.util.exception.MediaException;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class FileService {
+public class FileService implements FileUseCase {
 
     private static final String OS_NAME = "os.name";
     private static final String WINDOWS = "Windows";
@@ -38,6 +39,7 @@ public class FileService {
         this.context = context;
     }
 
+    @Override
     public String salvar(MultipartFile file, String fileName) {
         try {
             Path baseDir = Paths.get(getBasePath());
@@ -55,6 +57,7 @@ public class FileService {
         }
     }
 
+    @Override
     public Resource getMedia(String fileName) {
         Path baseDir = Paths.get(getBasePath());
         Path filePath = baseDir.resolve(fileName);
@@ -70,6 +73,7 @@ public class FileService {
         }
     }
 
+    @Override
     public void delete(String fileName) {
         Path baseDir = Paths.get(getBasePath());
         Path filePath = baseDir.resolve(fileName);
@@ -83,6 +87,7 @@ public class FileService {
         }
     }
 
+    @Override
     public String resolve(String path) {
         return context.getContextPath() + "/media?path=" + path;
     }
@@ -97,6 +102,7 @@ public class FileService {
         return basePath;
     }
 
+    @Override
     public InputStream getJksFile(List<String> jksPath) {
         String path;
 

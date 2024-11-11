@@ -1,6 +1,6 @@
 package br.com.heycheff.api.app.controller;
 
-import br.com.heycheff.api.app.service.StepService;
+import br.com.heycheff.api.app.usecase.StepUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,12 +31,12 @@ class StepControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean
-    StepService service;
+    StepUseCase useCase;
 
     @Test
     @WithMockUser("heycheff")
     void saveStep() throws Exception {
-        when(service.save(any(), any(), anyLong())).thenReturn(step());
+        when(useCase.save(any(), any(), anyLong())).thenReturn(step());
 
         var formData = """
                 step:1
@@ -57,7 +57,7 @@ class StepControllerTest {
     @Test
     @WithMockUser("heycheff")
     void deleteStep() throws Exception {
-        when(service.delete(anyInt(), anyLong())).thenReturn(step());
+        when(useCase.delete(anyInt(), anyLong())).thenReturn(step());
         mvc.perform(delete(URL + "/1")).andExpect(status().isNoContent());
     }
 }

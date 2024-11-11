@@ -24,6 +24,9 @@ cors:
   allowed-origins: http://179.124.193.12:3000, http://heycheff.com.br:3000, heycheff.com.br:3000
 
 heycheff:
+  azure:
+    blob-storage: ${AZURE_BLOB_STORAGE}
+    container-name: ${AZURE_CONTAINER_NAME}
   oauth:
     google-client-id: ${GOOGLE_CLIENT_ID}
   clerk:

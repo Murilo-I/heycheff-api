@@ -1,6 +1,6 @@
 package br.com.heycheff.api.app.controller;
 
-import br.com.heycheff.api.app.service.FileService;
+import br.com.heycheff.api.app.usecase.FileUseCase;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/media")
 public class MediaController {
 
-    final FileService service;
+    final FileUseCase useCase;
 
-    public MediaController(FileService service) {
-        this.service = service;
+    public MediaController(FileUseCase useCase) {
+        this.useCase = useCase;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public Resource getMedia(@RequestParam String path) {
-        return service.getMedia(path);
+        return useCase.getMedia(path);
     }
 }

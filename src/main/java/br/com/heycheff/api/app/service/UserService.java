@@ -2,6 +2,7 @@ package br.com.heycheff.api.app.service;
 
 import br.com.heycheff.api.app.dto.request.UserRequest;
 import br.com.heycheff.api.app.dto.response.UserResponse;
+import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Role;
 import br.com.heycheff.api.data.model.User;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import static br.com.heycheff.api.util.mapper.TypeMapper.fromUser;
 
 @Service
-public class UserService {
+public class UserService implements UserUseCase {
 
     final UserRepository userRepository;
     final ReceiptRepository receiptRepository;
@@ -29,6 +30,7 @@ public class UserService {
         this.receiptRepository = receiptRepository;
     }
 
+    @Override
     @Transactional
     public User save(UserRequest request) {
         try {
@@ -47,10 +49,12 @@ public class UserService {
         }
     }
 
+    @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    @Override
     public UserResponse findById(String userId) {
         var receiptCount = receiptRepository.findByOwnerId(
                 userId, PageRequest.of(1, 1)

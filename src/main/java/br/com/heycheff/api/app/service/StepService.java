@@ -2,6 +2,9 @@ package br.com.heycheff.api.app.service;
 
 import br.com.heycheff.api.app.dto.ProductDTO;
 import br.com.heycheff.api.app.dto.StepDTO;
+import br.com.heycheff.api.app.usecase.FileUseCase;
+import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
+import br.com.heycheff.api.app.usecase.StepUseCase;
 import br.com.heycheff.api.data.model.ProductDescriptions;
 import br.com.heycheff.api.data.model.Receipt;
 import br.com.heycheff.api.data.model.Step;
@@ -18,36 +21,38 @@ import java.util.Comparator;
 
 @Service
 @Transactional
-public class StepService {
+public class StepService implements StepUseCase {
     private static final String STEP_NOT_IN_RECEIPT_MESSAGE =
             "O Step de ID: %d não existe para a receita de ID: %d";
 
     final ReceiptRepository receiptRepository;
     final ProductRepository productRepository;
-    final FileService fileService;
-    final SequenceGeneratorService sequenceService;
+    final FileUseCase fileUseCase;
+    final SequenceGeneratorUseCase sequenceUseCase;
 
     public StepService(ReceiptRepository receiptRepository, ProductRepository productRepository,
-                       FileService fileService, SequenceGeneratorService sequenceService) {
+                       FileUseCase fileUseCase, SequenceGeneratorUseCase sequenceUseCase) {
         this.receiptRepository = receiptRepository;
         this.productRepository = productRepository;
-        this.fileService = fileService;
-        this.sequenceService = sequenceService;
+        this.fileUseCase = fileUseCase;
+        this.sequenceUseCase = sequenceUseCase;
     }
 
+    @Override
     public StepDTO getStep(Integer stepNumber, Long receiptId) {
         var receipt = validateReceipt(receiptId);
         var step = validateStep(stepNumber, receipt);
-        return TypeMapper.fromStepEntity(step, fileService.resolve(step.getPath()));
+        return TypeMapper.fromStepEntity(step, fileUseCase.resolve(step.getPath()));
     }
 
+    @Override
     public Step save(StepDTO step, MultipartFile video, Long receiptId) {
         var receipt = validateReceipt(receiptId);
-        var savedStep = new Step(sequenceService.generateSequence(Step.STEP_SEQUENCE),
+        var savedStep = new Step(sequenceUseCase.generateSequence(Step.STEP_SEQUENCE),
                 step.getStepNumber(), step.getModoPreparo(), step.getTimeMinutes());
 
         setProducts(step, savedStep);
-        savedStep.setPath(fileService.salvar(video,
+        savedStep.setPath(fileUseCase.salvar(video,
                 "receitaStep_" + receiptId + "_" + savedStep.getStepNumber()));
 
         receipt.getSteps().add(savedStep);
@@ -56,17 +61,19 @@ public class StepService {
         return savedStep;
     }
 
+    @Override
     public Step delete(Integer stepNumber, Long receiptId) {
         var receipt = validateReceipt(receiptId);
         var delStep = validateStep(stepNumber, receipt);
 
-        fileService.delete(delStep.getPath());
+        fileUseCase.delete(delStep.getPath());
         receipt.getSteps().remove(delStep);
         receiptRepository.save(receipt);
 
         return delStep;
     }
 
+    @Override
     public Step update(StepDTO step, MultipartFile video, Integer stepNumber, Long receiptId) {
         var updStep = delete(stepNumber, receiptId);
         var receipt = validateReceipt(receiptId);
@@ -75,7 +82,7 @@ public class StepService {
         setProducts(step, updStep);
         updStep.setStepNumber(step.getStepNumber());
         updStep.setPreparationMode(step.getModoPreparo());
-        updStep.setPath(fileService.salvar(video,
+        updStep.setPath(fileUseCase.salvar(video,
                 "receitaStep_" + receiptId + "_" + updStep.getStepNumber()));
 
         steps.add(updStep);

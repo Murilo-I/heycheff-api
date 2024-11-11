@@ -1,7 +1,7 @@
 package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.dto.MeasureUnitDTO;
-import br.com.heycheff.api.app.service.ProductService;
+import br.com.heycheff.api.app.usecase.ProductUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,16 +14,16 @@ import java.util.List;
 @RequestMapping("/produtos/{id}/medidas")
 public class MeasureUnitController {
 
-    final ProductService service;
+    final ProductUseCase useCase;
 
-    public MeasureUnitController(ProductService service) {
-        this.service = service;
+    public MeasureUnitController(ProductUseCase useCase) {
+        this.useCase = useCase;
     }
 
     @GetMapping
     public ResponseEntity<List<MeasureUnitDTO>> list(@PathVariable(name = "id") Integer produtoId) {
         if (produtoId == 0)
-            return ResponseEntity.ok(service.listMeasureUnits());
+            return ResponseEntity.ok(useCase.listMeasureUnits());
         else
             return ResponseEntity.notFound().build();
     }

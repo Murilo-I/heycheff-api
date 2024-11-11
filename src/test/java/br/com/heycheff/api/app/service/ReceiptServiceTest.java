@@ -3,6 +3,9 @@ package br.com.heycheff.api.app.service;
 import br.com.heycheff.api.app.dto.TagDTO;
 import br.com.heycheff.api.app.dto.request.ReceiptRequest;
 import br.com.heycheff.api.app.dto.response.ReceiptStatus;
+import br.com.heycheff.api.app.usecase.FileUseCase;
+import br.com.heycheff.api.app.usecase.ReceiptUseCase;
+import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
 import br.com.heycheff.api.data.model.Receipt;
 import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
@@ -29,9 +32,9 @@ public class ReceiptServiceTest {
     static final String THUMB = "thumb";
 
     ReceiptRepository repository = mock(ReceiptRepository.class);
-    FileService fileService = mock(FileService.class);
-    SequenceGeneratorService seqGenService = mock(SequenceGeneratorService.class);
-    ReceiptService receiptService = new ReceiptService(repository, fileService, seqGenService);
+    FileUseCase fileUseCase = mock(FileUseCase.class);
+    SequenceGeneratorUseCase seqGenUseCase = mock(SequenceGeneratorUseCase.class);
+    ReceiptUseCase receiptUseCase = new ReceiptService(repository, fileUseCase, seqGenUseCase);
 
     @Test
     void loadFeedSuccessfully() {
@@ -41,7 +44,7 @@ public class ReceiptServiceTest {
                         )
                 );
 
-        var feed = receiptService.loadFeed(PageRequest.of(1, 1));
+        var feed = receiptUseCase.loadFeed(PageRequest.of(1, 1));
 
         assertFalse(feed.items().isEmpty());
         assertEquals(SCRAMBLED_EGGS, feed.items().get(0).getTitulo());
@@ -62,7 +65,7 @@ public class ReceiptServiceTest {
     void loadModalSuccessfully() {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(receipt()));
 
-        var modal = receiptService.loadModal(ID);
+        var modal = receiptUseCase.loadModal(ID);
 
         assertNotNull(modal);
         assertEquals(step().getPreparationMode(), modal.getSteps().get(0).getModoPreparo());
@@ -73,7 +76,7 @@ public class ReceiptServiceTest {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
 
         var exception = assertThrows(ReceiptNotFoundException.class,
-                () -> receiptService.loadModal(ID));
+                () -> receiptUseCase.loadModal(ID));
 
         assertEquals("Receita Not Found!", exception.getMessage());
     }
@@ -82,10 +85,10 @@ public class ReceiptServiceTest {
     void saveReceiptSuccessfully() {
         var expected = receipt();
         when(repository.save(any())).thenReturn(expected);
-        when(seqGenService.generateSequence(anyString())).thenReturn(ID);
-        when(fileService.salvar(any(), anyString())).thenReturn(THUMB);
+        when(seqGenUseCase.generateSequence(anyString())).thenReturn(ID);
+        when(fileUseCase.salvar(any(), anyString())).thenReturn(THUMB);
 
-        var receipt = receiptService.save(request(), multipart());
+        var receipt = receiptUseCase.save(request(), multipart());
 
         assertEquals(expected.getSeqId(), receipt.getSeqId());
     }
@@ -104,7 +107,7 @@ public class ReceiptServiceTest {
         when(repository.save(any())).thenReturn(receipt());
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(receipt()));
 
-        assertDoesNotThrow(() -> receiptService.updateStatus(status(), ID));
+        assertDoesNotThrow(() -> receiptUseCase.updateStatus(status(), ID));
         verify(repository, times(1)).save(any());
     }
 
@@ -113,7 +116,7 @@ public class ReceiptServiceTest {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(ReceiptNotFoundException.class,
-                () -> receiptService.updateStatus(status(), ID));
+                () -> receiptUseCase.updateStatus(status(), ID));
         verify(repository, times(0)).save(any());
     }
 

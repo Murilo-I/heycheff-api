@@ -1,7 +1,7 @@
 package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.dto.TagDTO;
-import br.com.heycheff.api.app.service.TagService;
+import br.com.heycheff.api.app.usecase.TagUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,12 +30,12 @@ class TagControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean
-    TagService service;
+    TagUseCase useCase;
 
     @Test
     @WithMockUser("heycheff")
     void listAllTags() throws Exception {
-        when(service.listAll()).thenReturn(tags());
+        when(useCase.listAll()).thenReturn(tags());
 
         mvc.perform(get(URL))
                 .andExpect(status().isOk())
@@ -51,7 +51,7 @@ class TagControllerTest {
     @Test
     @WithMockUser("heycheff")
     void listTagsByReceipt() throws Exception {
-        when(service.findByReceiptId(anyLong())).thenReturn(tags());
+        when(useCase.findByReceiptId(anyLong())).thenReturn(tags());
 
         mvc.perform(get(URL)
                         .queryParam("receiptId", String.valueOf(1L)))
