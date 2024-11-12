@@ -36,7 +36,7 @@ heycheff:
   jwt:
     expiration: 1800000
   jwk:
-    jks-file: C:\\heycheff\\auth\\heycheff.jks, /site/heycheff.jks
+    jks-file: heycheff.jks
     password:
       key-store: ${JKS_STORE_PASS}
       key-pass: ${JKS_KEY_PASS}
