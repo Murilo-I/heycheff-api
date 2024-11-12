@@ -11,7 +11,7 @@ logging:
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URI}
+      uri: ${AZURE_COSMOS_CONNECTIONSTRING}
       auto-index-creation: true
   servlet:
     multipart:
@@ -36,7 +36,7 @@ heycheff:
   jwt:
     expiration: 1800000
   jwk:
-    jks-file: C:\\heycheff\\auth\\heycheff.jks, /home/heycheff/auth/heycheff.jks
+    jks-file: C:\\heycheff\\auth\\heycheff.jks, /home/heycheff.jks
     password:
       key-store: ${JKS_STORE_PASS}
       key-pass: ${JKS_KEY_PASS}
