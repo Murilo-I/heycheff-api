@@ -25,6 +25,8 @@ cors:
 
 heycheff:
   azure:
+    account-key: ${AZURE_ACCOUNT_KEY}
+    account-name: ${AZURE_ACCOUNT_NAME}
     blob-storage: ${AZURE_BLOB_STORAGE}
     container-name: ${AZURE_CONTAINER_NAME}
   oauth:

@@ -82,6 +82,7 @@ public class ReceiptService implements ReceiptUseCase {
     public ReceiptId save(ReceiptRequest request, MultipartFile thumb) {
         Receipt receipt = new Receipt(request.getTitulo());
         receipt.setSeqId(sequenceUseCase.generateSequence(Receipt.RECEIPT_SEQUENCE));
+        receipt.setOwnerId(request.getUserId());
         receipt.setTags(request.getTags().stream().map(TagDTO::toEntity).toList());
         receipt.setThumb(fileUseCase.salvar(thumb, "thumbReceita" + receipt.getSeqId()));
         receiptRepository.save(receipt);

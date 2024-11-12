@@ -53,10 +53,11 @@ public class ReceiptController {
     }
 
     @PostMapping
-    public ResponseEntity<ReceiptId> include(String titulo, String tags, MultipartFile thumb) {
+    public ResponseEntity<ReceiptId> include(String titulo, String tags,
+                                             String userId, MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
-        var receita = new ReceiptRequest(titulo, new Gson().fromJson(tags, listOfTags));
+        var receita = new ReceiptRequest(titulo, userId, new Gson().fromJson(tags, listOfTags));
         return ResponseEntity.status(HttpStatus.CREATED).body(useCase.save(receita, thumb));
     }
 

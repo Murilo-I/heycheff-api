@@ -94,7 +94,7 @@ public class ReceiptServiceTest {
     }
 
     ReceiptRequest request() {
-        return new ReceiptRequest(SCRAMBLED_EGGS,
+        return new ReceiptRequest(SCRAMBLED_EGGS, "UID",
                 Collections.singletonList(new TagDTO(1, "salgado")));
     }
 

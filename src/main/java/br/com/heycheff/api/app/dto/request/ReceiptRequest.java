@@ -11,5 +11,6 @@ import java.util.List;
 public class ReceiptRequest {
 
     private String titulo;
+    private String userId;
     private List<TagDTO> tags;
 }
