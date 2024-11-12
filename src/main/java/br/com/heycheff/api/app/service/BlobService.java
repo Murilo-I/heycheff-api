@@ -9,18 +9,19 @@ import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 
 @Service
-@Profile({"dev", "prod"})
 public class BlobService implements BlobUseCase {
 
     private static final String QUESTION_MARK = "?";
+    private static final String TEST = "test";
 
     @Value("${heycheff.azure.container-name}")
     String containerName;
@@ -32,9 +33,18 @@ public class BlobService implements BlobUseCase {
     String accountKey;
 
     private BlobServiceClient blobServiceClient;
+    final Environment environment;
+
+    public BlobService(Environment environment) {
+        this.environment = environment;
+    }
 
     @PostConstruct
     public void init() {
+        var activeProfiles = Arrays.stream(environment.getActiveProfiles()).toList();
+
+        if (activeProfiles.contains(TEST)) return;
+
         blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(blobStorageConnectionURI)
                 .credential(new StorageSharedKeyCredential(accountName, accountKey))

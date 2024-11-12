@@ -22,7 +22,7 @@ class TagServiceTest {
     @Test
     void listAllTags() {
         var tags = useCase.listAll();
-        assertEquals(16, tags.size());
+        assertEquals(17, tags.size());
         assertEquals(Tags.GREGA.getTag(), tags.get(14).getTag());
     }
 
