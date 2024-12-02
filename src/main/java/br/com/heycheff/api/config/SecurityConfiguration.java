@@ -16,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -77,13 +76,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        var thumbsMatcher = new RegexRequestMatcher("^/.*thumb.*", GET.name());
         return http.authorizeHttpRequests(httpCustomizer -> httpCustomizer
                         .requestMatchers(POST, "/user").permitAll()
                         .requestMatchers(POST, "/auth").permitAll()
                         .requestMatchers(POST, "/auth/clerk").permitAll()
                         .requestMatchers(GET, "/receitas").permitAll()
-                        .requestMatchers(thumbsMatcher).permitAll()
+                        .requestMatchers(GET, "/media**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

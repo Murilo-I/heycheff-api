@@ -1,6 +1,8 @@
 package br.com.heycheff.api.app.controller;
 
+import br.com.heycheff.api.app.dto.request.FollowRequest;
 import br.com.heycheff.api.app.dto.request.UserRequest;
+import br.com.heycheff.api.app.dto.response.FollowResponse;
 import br.com.heycheff.api.app.dto.response.UserResponse;
 import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.User;
@@ -26,5 +28,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> save(@RequestBody UserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(useCase.save(request));
+    }
+
+    @PostMapping("/follow")
+    public ResponseEntity<FollowResponse> follow(@RequestBody FollowRequest request) {
+        return ResponseEntity.ok(useCase.follow(request));
     }
 }

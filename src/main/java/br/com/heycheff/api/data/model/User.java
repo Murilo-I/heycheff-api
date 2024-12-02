@@ -2,6 +2,7 @@ package br.com.heycheff.api.data.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,8 +26,10 @@ public class User implements UserDetails {
     private String username;
     private List<Role> roles;
     @Getter
+    @Setter
     private List<String> followersIds;
     @Getter
+    @Setter
     private List<String> followingIds;
 
     @Override
