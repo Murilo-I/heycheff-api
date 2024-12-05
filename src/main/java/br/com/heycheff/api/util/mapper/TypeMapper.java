@@ -28,6 +28,7 @@ public interface TypeMapper {
                 .username(user.getUsername())
                 .followers(followers)
                 .following(following)
+                .followersIds(user.getFollowersIds())
                 .receiptsCount(receiptsCount)
                 .build();
     }

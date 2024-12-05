@@ -72,8 +72,11 @@ public class UserService implements UserUseCase {
                 .orElseThrow(UserNotFoundException::new);
         var userToFollow = userRepository.findById(request.getUserToFollowId())
                 .orElseThrow(() -> new UserNotFoundException("Following ID Not Found!"));
-
         var userFollowing = user.getFollowingIds();
+
+        if (user.equals(userToFollow))
+            return new FollowResponse(userFollowing);
+
         boolean followingNotRemoved = !userFollowing.removeIf(request.getUserToFollowId()::equals);
         if (followingNotRemoved)
             userFollowing.add(request.getUserToFollowId());
