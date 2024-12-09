@@ -2,6 +2,9 @@ package br.com.heycheff.api.app.service;
 
 import br.com.heycheff.api.app.dto.ProductDTO;
 import br.com.heycheff.api.app.dto.StepDTO;
+import br.com.heycheff.api.app.usecase.FileUseCase;
+import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
+import br.com.heycheff.api.app.usecase.StepUseCase;
 import br.com.heycheff.api.data.model.MeasureUnit;
 import br.com.heycheff.api.data.model.Product;
 import br.com.heycheff.api.data.model.ProductDescriptions;
@@ -31,23 +34,23 @@ public class StepServiceTest {
 
     ReceiptRepository receiptRepository = mock(ReceiptRepository.class);
     ProductRepository productRepository = mock(ProductRepository.class);
-    FileService fileService = mock(FileService.class);
-    SequenceGeneratorService sequenceService = mock(SequenceGeneratorService.class);
-    StepService stepService = new StepService(
-            receiptRepository, productRepository, fileService, sequenceService
+    FileUseCase fileUseCase = mock(FileUseCase.class);
+    SequenceGeneratorUseCase sequenceUseCase = mock(SequenceGeneratorUseCase.class);
+    StepUseCase stepUseCase = new StepService(
+            receiptRepository, productRepository, fileUseCase, sequenceUseCase
     );
 
     @Test
     void saveStepSuccessfully() {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.of(ReceiptServiceTest.receipt()));
-        when(sequenceService.generateSequence(anyString())).thenReturn(ReceiptServiceTest.ID);
+        when(sequenceUseCase.generateSequence(anyString())).thenReturn(ReceiptServiceTest.ID);
         when(productRepository.findByValue(anyString()))
                 .thenReturn(Optional.of(new ProductDescriptions(DESC)));
         when(productRepository.save(any())).thenReturn(new Product());
-        when(fileService.salvar(any(), anyString())).thenReturn(PATH);
+        when(fileUseCase.salvar(any(), anyString())).thenReturn(PATH);
         when(receiptRepository.save(any())).thenReturn(ReceiptServiceTest.receipt());
 
-        var step = stepService.save(dto(), ReceiptServiceTest.multipart(), ReceiptServiceTest.ID);
+        var step = stepUseCase.save(dto(), ReceiptServiceTest.multipart(), ReceiptServiceTest.ID);
 
         Assertions.assertEquals(2, step.getProducts().size());
         Assertions.assertEquals(PREPARE_MODE, step.getPreparationMode());
@@ -64,21 +67,21 @@ public class StepServiceTest {
     @Test
     void throwReceiptNotFoundExceptionWhenSavingStep() {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-        assertThrows(ReceiptNotFoundException.class, () -> stepService.save(dto(), ReceiptServiceTest.multipart(), ReceiptServiceTest.ID));
+        assertThrows(ReceiptNotFoundException.class, () -> stepUseCase.save(dto(), ReceiptServiceTest.multipart(), ReceiptServiceTest.ID));
     }
 
     @Test
     void deleteStepSuccessfully() {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.of(ReceiptServiceTest.receipt()));
         when(receiptRepository.save(any())).thenReturn(ReceiptServiceTest.receipt());
-        doNothing().when(fileService).delete(anyString());
-        assertDoesNotThrow(() -> stepService.delete(STEP_NUMBER, ReceiptServiceTest.ID));
+        doNothing().when(fileUseCase).delete(anyString());
+        assertDoesNotThrow(() -> stepUseCase.delete(STEP_NUMBER, ReceiptServiceTest.ID));
     }
 
     @Test
     void throwReceiptNotFoundExceptionWhenDeletingStep() {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-        assertThrows(ReceiptNotFoundException.class, () -> stepService.delete(STEP_NUMBER, ReceiptServiceTest.ID));
+        assertThrows(ReceiptNotFoundException.class, () -> stepUseCase.delete(STEP_NUMBER, ReceiptServiceTest.ID));
     }
 
     @Test
@@ -86,7 +89,7 @@ public class StepServiceTest {
         when(receiptRepository.findBySeqId(anyLong())).thenReturn(Optional.of(ReceiptServiceTest.receipt()));
 
         var exception = assertThrows(StepNotInReceiptException.class,
-                () -> stepService.delete(2, ReceiptServiceTest.ID));
+                () -> stepUseCase.delete(2, ReceiptServiceTest.ID));
 
         assertEquals("O Step de ID: 2 não existe para a receita de ID: 1", exception.getMessage());
     }

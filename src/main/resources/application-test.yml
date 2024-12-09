@@ -8,6 +8,9 @@ cors:
   allowed-origins: http://localhost:3000
 
 heycheff:
+  azure:
+    blob-storage: blob
+    container-name: blob-container
   oauth:
     google-client-id: gClientId
   clerk:

@@ -1,7 +1,7 @@
 package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.dto.ProductDescDTO;
-import br.com.heycheff.api.app.service.ProductService;
+import br.com.heycheff.api.app.usecase.ProductUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,12 +27,12 @@ class ProductControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean
-    ProductService service;
+    ProductUseCase useCase;
 
     @Test
     @WithMockUser("heycheff")
     void listAllProducts() throws Exception {
-        when(service.listProducts()).thenReturn(Set.of(new ProductDescDTO("prod")));
+        when(useCase.listProducts()).thenReturn(Set.of(new ProductDescDTO("prod")));
 
         mvc.perform(get("/produtos")
                         .contentType(MediaType.APPLICATION_JSON))

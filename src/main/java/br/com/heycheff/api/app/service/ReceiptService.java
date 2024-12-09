@@ -4,6 +4,9 @@ import br.com.heycheff.api.app.dto.StepDTO;
 import br.com.heycheff.api.app.dto.TagDTO;
 import br.com.heycheff.api.app.dto.request.ReceiptRequest;
 import br.com.heycheff.api.app.dto.response.*;
+import br.com.heycheff.api.app.usecase.FileUseCase;
+import br.com.heycheff.api.app.usecase.ReceiptUseCase;
+import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
 import br.com.heycheff.api.data.model.Receipt;
 import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
@@ -23,19 +26,20 @@ import static br.com.heycheff.api.util.mapper.TypeMapper.fromReceiptEntity;
 import static br.com.heycheff.api.util.mapper.TypeMapper.fromStepEntity;
 
 @Service
-public class ReceiptService {
+public class ReceiptService implements ReceiptUseCase {
 
     final ReceiptRepository receiptRepository;
-    final FileService fileService;
-    final SequenceGeneratorService sequenceService;
+    final FileUseCase fileUseCase;
+    final SequenceGeneratorUseCase sequenceUseCase;
 
-    public ReceiptService(ReceiptRepository receiptRepository, FileService fileService,
-                          SequenceGeneratorService sequenceService) {
+    public ReceiptService(ReceiptRepository receiptRepository, FileUseCase fileUseCase,
+                          SequenceGeneratorUseCase sequenceUseCase) {
         this.receiptRepository = receiptRepository;
-        this.fileService = fileService;
-        this.sequenceService = sequenceService;
+        this.fileUseCase = fileUseCase;
+        this.sequenceUseCase = sequenceUseCase;
     }
 
+    @Override
     @Cacheable(value = CacheNames.FEED)
     public PageResponse<ReceiptFeed> loadFeed(PageRequest pageRequest) {
         Page<Receipt> receipts = receiptRepository.findByStatus(true, pageRequest);
@@ -43,6 +47,7 @@ public class ReceiptService {
         return new PageResponse<>(receiptFeed, receipts.getTotalElements());
     }
 
+    @Override
     public PageResponse<ReceiptFeed> loadUserContent(PageRequest pageRequest, String userId) {
         Page<Receipt> receipts = receiptRepository.findByOwnerId(userId, pageRequest);
         var userReceipts = mapReceipts(receipts);
@@ -51,17 +56,18 @@ public class ReceiptService {
 
     private List<ReceiptFeed> mapReceipts(Page<Receipt> receipts) {
         return receipts.map(receipt -> fromReceiptEntity(
-                        receipt, fileService.resolve(receipt.getThumb())
+                        receipt, fileUseCase.resolve(receipt.getThumb())
                 )
         ).getContent();
     }
 
+    @Override
     public ReceiptModal loadModal(Long id) {
         var receipt = validateReceipt(id);
         List<StepDTO> steps = new ArrayList<>();
 
         receipt.getSteps().forEach(step -> steps.add(
-                fromStepEntity(step, fileService.resolve(step.getPath()))
+                fromStepEntity(step, fileUseCase.resolve(step.getPath()))
         ));
 
         ReceiptModal modal = new ReceiptModal();
@@ -71,16 +77,18 @@ public class ReceiptService {
         return modal;
     }
 
+    @Override
     @Transactional
     public ReceiptId save(ReceiptRequest request, MultipartFile thumb) {
         Receipt receipt = new Receipt(request.getTitulo());
-        receipt.setSeqId(sequenceService.generateSequence(Receipt.RECEIPT_SEQUENCE));
+        receipt.setSeqId(sequenceUseCase.generateSequence(Receipt.RECEIPT_SEQUENCE));
         receipt.setTags(request.getTags().stream().map(TagDTO::toEntity).toList());
-        receipt.setThumb(fileService.salvar(thumb, "thumbReceita" + receipt.getSeqId()));
+        receipt.setThumb(fileUseCase.salvar(thumb, "thumbReceita" + receipt.getSeqId()));
         receiptRepository.save(receipt);
         return new ReceiptId(receipt.getSeqId());
     }
 
+    @Override
     @Transactional
     public void updateStatus(ReceiptStatus dto, Long id) {
         var receipt = validateReceipt(id);
@@ -88,6 +96,7 @@ public class ReceiptService {
         receiptRepository.save(receipt);
     }
 
+    @Override
     public ReceiptNextStep nextStep(Long id) {
         var receipt = validateReceipt(id);
         var steps = receipt.getSteps();
@@ -95,7 +104,7 @@ public class ReceiptService {
                 .max(Integer::compareTo).orElse(0);
 
         return new ReceiptNextStep(steps.stream().map(step -> fromStepEntity(
-                        step, fileService.resolve(step.getPath())
+                        step, fileUseCase.resolve(step.getPath())
                 ))
                 .toList(), nextStep + 1);
     }

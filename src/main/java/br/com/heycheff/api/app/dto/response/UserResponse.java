@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -13,6 +15,7 @@ public class UserResponse {
 
     private String username;
     private Integer followers;
+    private List<String> followersIds;
     private Integer following;
     private Long receiptsCount;
 }

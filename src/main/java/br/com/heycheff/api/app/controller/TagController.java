@@ -1,7 +1,7 @@
 package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.dto.TagDTO;
-import br.com.heycheff.api.app.service.TagService;
+import br.com.heycheff.api.app.usecase.TagUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,15 +15,15 @@ import java.util.Objects;
 @RequestMapping("/tags")
 public class TagController {
 
-    final TagService service;
+    final TagUseCase useCase;
 
-    public TagController(TagService service) {
-        this.service = service;
+    public TagController(TagUseCase useCase) {
+        this.useCase = useCase;
     }
 
     @GetMapping
     public ResponseEntity<List<TagDTO>> list(@RequestParam(required = false) Long receiptId) {
-        if (Objects.isNull(receiptId)) return ResponseEntity.ok(service.listAll());
-        else return ResponseEntity.ok(service.findByReceiptId(receiptId));
+        if (Objects.isNull(receiptId)) return ResponseEntity.ok(useCase.listAll());
+        else return ResponseEntity.ok(useCase.findByReceiptId(receiptId));
     }
 }

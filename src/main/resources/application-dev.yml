@@ -24,6 +24,9 @@ cors:
   allowed-origins: http://localhost:4200, http://localhost:3000, http://localhost:8081
 
 heycheff:
+  azure:
+    blob-storage: ${AZURE_BLOB_STORAGE}
+    container-name: ${AZURE_CONTAINER_NAME}
   oauth:
     google-client-id: ${GOOGLE_CLIENT_ID}
   clerk:

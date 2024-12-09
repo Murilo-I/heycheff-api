@@ -5,7 +5,7 @@ import br.com.heycheff.api.app.dto.response.PageResponse;
 import br.com.heycheff.api.app.dto.response.ReceiptFeed;
 import br.com.heycheff.api.app.dto.response.ReceiptId;
 import br.com.heycheff.api.app.dto.response.ReceiptModal;
-import br.com.heycheff.api.app.service.ReceiptService;
+import br.com.heycheff.api.app.usecase.ReceiptUseCase;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +43,12 @@ class ReceiptControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean
-    ReceiptService service;
+    ReceiptUseCase useCase;
 
     @Test
     @WithMockUser("heycheff")
     void loadFeed() throws Exception {
-        when(service.loadFeed(PageRequest.of(1, 1)))
+        when(useCase.loadFeed(PageRequest.of(1, 1)))
                 .thenReturn(new PageResponse<>(
                         List.of(new ReceiptFeed(
                                 ID, "thumb", "title", Collections.emptyList(), 15)
@@ -69,7 +69,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void loadModal() throws Exception {
-        when(service.loadModal(anyLong())).thenReturn(modal());
+        when(useCase.loadModal(anyLong())).thenReturn(modal());
 
         mvc.perform(get(URL_TEMPLATE)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -90,7 +90,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void modalNotFound() throws Exception {
-        doThrow(ReceiptNotFoundException.class).when(service).loadModal(anyLong());
+        doThrow(ReceiptNotFoundException.class).when(useCase).loadModal(anyLong());
 
         mvc.perform(get(URL_TEMPLATE)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -100,7 +100,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void includeReceipt() throws Exception {
-        when(service.save(any(), any())).thenReturn(new ReceiptId(receipt().getSeqId()));
+        when(useCase.save(any(), any())).thenReturn(new ReceiptId(receipt().getSeqId()));
 
         var formData = """
                 titulo:Camarão do Baiano
@@ -120,7 +120,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void updateStatus() throws Exception {
-        doNothing().when(service).updateStatus(any(), anyLong());
+        doNothing().when(useCase).updateStatus(any(), anyLong());
 
         var json = """
                 {

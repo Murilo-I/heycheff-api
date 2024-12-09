@@ -28,6 +28,7 @@ public interface TypeMapper {
                 .username(user.getUsername())
                 .followers(followers)
                 .following(following)
+                .followersIds(user.getFollowersIds())
                 .receiptsCount(receiptsCount)
                 .build();
     }
@@ -77,7 +78,7 @@ public interface TypeMapper {
         try {
             estimatedTime = receipt.getSteps().stream().map(Step::getTimeMinutes)
                     .reduce(Integer::sum).orElseThrow(ReceiptEstimatedTimeException::new);
-        } catch (NullPointerException ignored) {
+        } catch (ReceiptEstimatedTimeException ignored) {
         }
         return new ReceiptFeed(
                 receipt.getSeqId(), thumb, receipt.getTitle(), tags, estimatedTime

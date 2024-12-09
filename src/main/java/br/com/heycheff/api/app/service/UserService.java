@@ -1,7 +1,10 @@
 package br.com.heycheff.api.app.service;
 
+import br.com.heycheff.api.app.dto.request.FollowRequest;
 import br.com.heycheff.api.app.dto.request.UserRequest;
+import br.com.heycheff.api.app.dto.response.FollowResponse;
 import br.com.heycheff.api.app.dto.response.UserResponse;
+import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Role;
 import br.com.heycheff.api.data.model.User;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
@@ -19,7 +22,7 @@ import java.util.Optional;
 import static br.com.heycheff.api.util.mapper.TypeMapper.fromUser;
 
 @Service
-public class UserService {
+public class UserService implements UserUseCase {
 
     final UserRepository userRepository;
     final ReceiptRepository receiptRepository;
@@ -29,6 +32,7 @@ public class UserService {
         this.receiptRepository = receiptRepository;
     }
 
+    @Override
     @Transactional
     public User save(UserRequest request) {
         try {
@@ -47,15 +51,47 @@ public class UserService {
         }
     }
 
+    @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    @Override
     public UserResponse findById(String userId) {
         var receiptCount = receiptRepository.findByOwnerId(
                 userId, PageRequest.of(1, 1)
         ).getTotalElements();
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return fromUser(user, receiptCount);
+    }
+
+    @Override
+    @Transactional
+    public FollowResponse follow(FollowRequest request) {
+        var user = userRepository.findById(request.getUserId())
+                .orElseThrow(UserNotFoundException::new);
+        var userToFollow = userRepository.findById(request.getUserToFollowId())
+                .orElseThrow(() -> new UserNotFoundException("Following ID Not Found!"));
+        var userFollowing = user.getFollowingIds();
+
+        if (user.equals(userToFollow))
+            return new FollowResponse(userFollowing);
+
+        boolean followingNotRemoved = !userFollowing.removeIf(request.getUserToFollowId()::equals);
+        if (followingNotRemoved)
+            userFollowing.add(request.getUserToFollowId());
+
+        user.setFollowingIds(userFollowing);
+        userRepository.save(user);
+
+        var userFollowers = userToFollow.getFollowersIds();
+        boolean followerNotRemoved = !userFollowers.removeIf(request.getUserId()::equals);
+        if (followerNotRemoved)
+            userFollowers.add(request.getUserId());
+
+        userToFollow.setFollowersIds(userFollowers);
+        userRepository.save(userToFollow);
+
+        return new FollowResponse(userFollowing);
     }
 }

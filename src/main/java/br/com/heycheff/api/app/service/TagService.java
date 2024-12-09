@@ -1,6 +1,7 @@
 package br.com.heycheff.api.app.service;
 
 import br.com.heycheff.api.app.dto.TagDTO;
+import br.com.heycheff.api.app.usecase.TagUseCase;
 import br.com.heycheff.api.data.model.Tags;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
 import br.com.heycheff.api.util.constants.CacheNames;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class TagService {
+public class TagService implements TagUseCase {
 
     final ReceiptRepository repository;
 
@@ -21,11 +22,13 @@ public class TagService {
         this.repository = repository;
     }
 
+    @Override
     public List<TagDTO> listAll() {
         return Arrays.stream(Tags.values()).map(tag -> new TagDTO(tag.getId(), tag.getTag()))
                 .toList();
     }
 
+    @Override
     @Cacheable(value = CacheNames.TAGS)
     public List<TagDTO> findByReceiptId(Long id) {
         return repository.findBySeqId(id).orElseThrow(ReceiptNotFoundException::new)

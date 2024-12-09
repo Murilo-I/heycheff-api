@@ -17,7 +17,8 @@ public enum Tags {
     INDIANA(13, "Indiana"),
     TAILANDESA(14, "Tailandesa"),
     GREGA(15, "Grega"),
-    ARABE(16, "Árabe");
+    ARABE(16, "Árabe"),
+    VALENCIANA(17, "Valenciana");
 
     private final Integer id;
     private final String tag;
