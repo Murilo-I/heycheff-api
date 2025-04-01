@@ -78,7 +78,7 @@ public interface TypeMapper {
         try {
             estimatedTime = receipt.getSteps().stream().map(Step::getTimeMinutes)
                     .reduce(Integer::sum).orElseThrow(ReceiptEstimatedTimeException::new);
-        } catch (ReceiptEstimatedTimeException ignored) {
+        } catch (NullPointerException ignored) {
         }
         return new ReceiptFeed(
                 receipt.getSeqId(), thumb, receipt.getTitle(), tags, estimatedTime

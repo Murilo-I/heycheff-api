@@ -4,9 +4,12 @@ import br.com.heycheff.api.app.dto.TagDTO;
 import br.com.heycheff.api.app.dto.request.ReceiptRequest;
 import br.com.heycheff.api.app.dto.response.*;
 import br.com.heycheff.api.app.usecase.ReceiptUseCase;
+import br.com.heycheff.api.util.constants.ValidationMessages;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +56,12 @@ public class ReceiptController {
     }
 
     @PostMapping
-    public ResponseEntity<ReceiptId> include(String titulo, String tags, MultipartFile thumb) {
+    public ResponseEntity<ReceiptId> include(@NotBlank(message = ValidationMessages.RECEIPT_TITLE)
+                                             String titulo,
+                                             @NotNull(message = ValidationMessages.RECEIPT_TAGS)
+                                             String tags,
+                                             @NotNull(message = ValidationMessages.RECEIPT_THUMB)
+                                             MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
         var receita = new ReceiptRequest(titulo, new Gson().fromJson(tags, listOfTags));
