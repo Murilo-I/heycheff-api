@@ -12,6 +12,7 @@ import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.ReceiptRepository;
 import br.com.heycheff.api.util.constants.CacheNames;
 import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
+import br.com.heycheff.api.util.mapper.TypeMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -75,6 +76,24 @@ public class ReceiptService implements ReceiptUseCase {
         modal.setSteps(steps);
 
         return modal;
+    }
+
+    @Override
+    public List<FullReceiptResponse> findAll() {
+        var fullResponse = new ArrayList<FullReceiptResponse>();
+        receiptRepository.findAll().forEach(receipt -> {
+            var fullReceipt = FullReceiptResponse.builder()
+                    .title(receipt.getTitle())
+                    .tags(receipt.getTags().stream()
+                            .map(TypeMapper::fromTagId)
+                            .toList())
+                    .steps(receipt.getSteps().stream()
+                            .map(step -> fromStepEntity(step, null))
+                            .toList())
+                    .build();
+            fullResponse.add(fullReceipt);
+        });
+        return fullResponse;
     }
 
     @Override

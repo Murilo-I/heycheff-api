@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -39,6 +40,11 @@ public class ReceiptController {
             return ResponseEntity.ok(useCase.loadFeed(pageRequest));
 
         return ResponseEntity.ok(useCase.loadUserContent(pageRequest, userId));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<FullReceiptResponse>> getAll() {
+        return ResponseEntity.ok(useCase.findAll());
     }
 
     @GetMapping("/{id}")

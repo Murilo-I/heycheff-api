@@ -1,6 +1,7 @@
 package br.com.heycheff.api.config;
 
 import br.com.heycheff.api.config.auth.AuthenticationFilter;
+import br.com.heycheff.api.data.model.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,6 +83,7 @@ public class SecurityConfiguration {
                         .requestMatchers(POST, "/auth/clerk").permitAll()
                         .requestMatchers(GET, "/receitas").permitAll()
                         .requestMatchers(GET, "/media**").permitAll()
+                        .requestMatchers(GET, "/receitas/all").hasAuthority(Role.ADMIN.getAuthority())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
