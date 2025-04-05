@@ -24,6 +24,6 @@ public class TagController {
     @GetMapping
     public ResponseEntity<List<TagDTO>> list(@RequestParam(required = false) Long recipeId) {
         if (Objects.isNull(recipeId)) return ResponseEntity.ok(useCase.listAll());
-        else return ResponseEntity.ok(useCase.findByReceiptId(recipeId));
+        else return ResponseEntity.ok(useCase.findByRecipeId(recipeId));
     }
 }

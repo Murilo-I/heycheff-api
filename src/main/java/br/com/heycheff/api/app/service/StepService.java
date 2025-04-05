@@ -22,7 +22,7 @@ import java.util.Comparator;
 @Service
 @Transactional
 public class StepService implements StepUseCase {
-    private static final String STEP_NOT_IN_RECEIPT_MESSAGE =
+    private static final String STEP_NOT_IN_RECIPE_MESSAGE =
             "O Step de ID: %d não existe para a receita de ID: %d";
 
     final RecipeRepository recipeRepository;
@@ -40,14 +40,14 @@ public class StepService implements StepUseCase {
 
     @Override
     public StepDTO getStep(Integer stepNumber, Long recipeId) {
-        var recipe = validateReceipt(recipeId);
+        var recipe = validateRecipe(recipeId);
         var step = validateStep(stepNumber, recipe);
         return TypeMapper.fromStepEntity(step, fileUseCase.resolve(step.getPath()));
     }
 
     @Override
     public Step save(StepDTO step, MultipartFile video, Long recipeId) {
-        var recipe = validateReceipt(recipeId);
+        var recipe = validateRecipe(recipeId);
         var savedStep = new Step(sequenceUseCase.generateSequence(Step.STEP_SEQUENCE),
                 step.getStepNumber(), step.getModoPreparo(), step.getTimeMinutes());
 
@@ -63,7 +63,7 @@ public class StepService implements StepUseCase {
 
     @Override
     public Step delete(Integer stepNumber, Long recipeId) {
-        var recipe = validateReceipt(recipeId);
+        var recipe = validateRecipe(recipeId);
         var delStep = validateStep(stepNumber, recipe);
 
         fileUseCase.delete(delStep.getPath());
@@ -76,7 +76,7 @@ public class StepService implements StepUseCase {
     @Override
     public Step update(StepDTO step, MultipartFile video, Integer stepNumber, Long recipeId) {
         var updStep = delete(stepNumber, recipeId);
-        var recipe = validateReceipt(recipeId);
+        var recipe = validateRecipe(recipeId);
         var steps = recipe.getSteps();
 
         setProducts(step, updStep);
@@ -92,14 +92,14 @@ public class StepService implements StepUseCase {
         return updStep;
     }
 
-    private Recipe validateReceipt(Long recipeId) {
+    private Recipe validateRecipe(Long recipeId) {
         return recipeRepository.findBySeqId(recipeId).orElseThrow(RecipeNotFoundException::new);
     }
 
     private Step validateStep(Integer stepNumber, Recipe recipe) {
         return recipe.getSteps().stream().filter(step -> step.getStepNumber().equals(stepNumber))
                 .findFirst().orElseThrow(() -> new StepNotInRecipeException(
-                        String.format(STEP_NOT_IN_RECEIPT_MESSAGE, stepNumber, recipe.getSeqId())
+                        String.format(STEP_NOT_IN_RECIPE_MESSAGE, stepNumber, recipe.getSeqId())
                 ));
     }
 

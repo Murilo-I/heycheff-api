@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import static br.com.heycheff.api.util.mapper.TypeMapper.fromReceiptEntity;
+import static br.com.heycheff.api.util.mapper.TypeMapper.fromRecipeEntity;
 import static br.com.heycheff.api.util.mapper.TypeMapper.fromStepEntity;
 
 @Service
@@ -44,19 +44,19 @@ public class RecipeService implements RecipeUseCase {
     @Cacheable(value = CacheNames.FEED)
     public PageResponse<RecipeFeed> loadFeed(PageRequest pageRequest) {
         Page<Recipe> recipes = recipeRepository.findByStatus(true, pageRequest);
-        var recipeFeed = mapReceipts(recipes);
+        var recipeFeed = mapRecipes(recipes);
         return new PageResponse<>(recipeFeed, recipes.getTotalElements());
     }
 
     @Override
     public PageResponse<RecipeFeed> loadUserContent(PageRequest pageRequest, String userId) {
         Page<Recipe> recipes = recipeRepository.findByOwnerId(userId, pageRequest);
-        var userReceipts = mapReceipts(recipes);
-        return new PageResponse<>(userReceipts, recipes.getTotalElements());
+        var userRecipes = mapRecipes(recipes);
+        return new PageResponse<>(userRecipes, recipes.getTotalElements());
     }
 
-    private List<RecipeFeed> mapReceipts(Page<Recipe> recipes) {
-        return recipes.map(recipe -> fromReceiptEntity(
+    private List<RecipeFeed> mapRecipes(Page<Recipe> recipes) {
+        return recipes.map(recipe -> fromRecipeEntity(
                         recipe, fileUseCase.resolve(recipe.getThumb())
                 )
         ).getContent();
@@ -64,7 +64,7 @@ public class RecipeService implements RecipeUseCase {
 
     @Override
     public RecipeModal loadModal(Long id) {
-        var recipe = validateReceipt(id);
+        var recipe = validateRecipe(id);
         List<StepDTO> steps = new ArrayList<>();
 
         recipe.getSteps().forEach(step -> steps.add(
@@ -82,7 +82,7 @@ public class RecipeService implements RecipeUseCase {
     public List<FullRecipeResponse> findAll() {
         var fullResponse = new ArrayList<FullRecipeResponse>();
         recipeRepository.findAll().forEach(recipe -> {
-            var fullReceipt = FullRecipeResponse.builder()
+            var fullRecipe = FullRecipeResponse.builder()
                     .recipeId(recipe.getId())
                     .title(recipe.getTitle())
                     .tags(recipe.getTags().stream()
@@ -92,7 +92,7 @@ public class RecipeService implements RecipeUseCase {
                             .map(step -> fromStepEntity(step, null))
                             .toList())
                     .build();
-            fullResponse.add(fullReceipt);
+            fullResponse.add(fullRecipe);
         });
         return fullResponse;
     }
@@ -111,14 +111,14 @@ public class RecipeService implements RecipeUseCase {
     @Override
     @Transactional
     public void updateStatus(RecipeStatus dto, Long id) {
-        var recipe = validateReceipt(id);
+        var recipe = validateRecipe(id);
         recipe.setStatus(dto.getStatus());
         recipeRepository.save(recipe);
     }
 
     @Override
     public RecipeNextStep nextStep(Long id) {
-        var recipe = validateReceipt(id);
+        var recipe = validateRecipe(id);
         var steps = recipe.getSteps();
         var nextStep = steps.stream().map(Step::getStepNumber)
                 .max(Integer::compareTo).orElse(0);
@@ -129,7 +129,7 @@ public class RecipeService implements RecipeUseCase {
                 .toList(), nextStep + 1);
     }
 
-    private Recipe validateReceipt(Long recipeId) {
+    private Recipe validateRecipe(Long recipeId) {
         return recipeRepository.findBySeqId(recipeId).orElseThrow(RecipeNotFoundException::new);
     }
 }

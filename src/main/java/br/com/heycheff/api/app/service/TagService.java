@@ -30,7 +30,7 @@ public class TagService implements TagUseCase {
 
     @Override
     @Cacheable(value = CacheNames.TAGS)
-    public List<TagDTO> findByReceiptId(Long id) {
+    public List<TagDTO> findByRecipeId(Long id) {
         return repository.findBySeqId(id).orElseThrow(RecipeNotFoundException::new)
                 .getTags().stream().map(TypeMapper::fromTagId).toList();
     }

@@ -65,7 +65,7 @@ public class StepServiceTest {
     }
 
     @Test
-    void throwReceiptNotFoundExceptionWhenSavingStep() {
+    void throwRecipeNotFoundExceptionWhenSavingStep() {
         when(recipeRepository.findBySeqId(anyLong())).thenReturn(Optional.empty());
         assertThrows(RecipeNotFoundException.class, () -> stepUseCase.save(dto(), RecipeServiceTest.multipart(), RecipeServiceTest.ID));
     }
@@ -79,13 +79,13 @@ public class StepServiceTest {
     }
 
     @Test
-    void throwReceiptNotFoundExceptionWhenDeletingStep() {
+    void throwRecipeNotFoundExceptionWhenDeletingStep() {
         when(recipeRepository.findBySeqId(anyLong())).thenReturn(Optional.empty());
         assertThrows(RecipeNotFoundException.class, () -> stepUseCase.delete(STEP_NUMBER, RecipeServiceTest.ID));
     }
 
     @Test
-    void throwStepNotInReceiptExceptionWhenDeletingStep() {
+    void throwStepNotInRecipeExceptionWhenDeletingStep() {
         when(recipeRepository.findBySeqId(anyLong())).thenReturn(Optional.of(RecipeServiceTest.recipe()));
 
         var exception = assertThrows(StepNotInRecipeException.class,

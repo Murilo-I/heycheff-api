@@ -62,13 +62,13 @@ public class RecipeController {
     }
 
     @PostMapping
-    public ResponseEntity<RecipeId> include(@NotBlank(message = ValidationMessages.RECEIPT_TITLE)
+    public ResponseEntity<RecipeId> include(@NotBlank(message = ValidationMessages.RECIPE_TITLE)
                                             String titulo,
-                                            @NotNull(message = ValidationMessages.RECEIPT_TAGS)
+                                            @NotNull(message = ValidationMessages.RECIPE_TAGS)
                                             String tags,
                                             @NotNull(message = ValidationMessages.USER_ID)
                                             String userId,
-                                            @NotNull(message = ValidationMessages.RECEIPT_THUMB)
+                                            @NotNull(message = ValidationMessages.RECIPE_THUMB)
                                             MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();

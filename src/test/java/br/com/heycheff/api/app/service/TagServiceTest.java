@@ -27,18 +27,18 @@ class TagServiceTest {
     }
 
     @Test
-    void listTagsByReceipt() {
+    void listTagsByRecipe() {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(RecipeServiceTest.recipe()));
 
-        var tags = useCase.findByReceiptId(RecipeServiceTest.ID);
+        var tags = useCase.findByRecipeId(RecipeServiceTest.ID);
 
         assertEquals(3, tags.size());
         assertEquals(Tags.VEGANO.getTag(), tags.get(2).getTag());
     }
 
     @Test
-    void throwReceiptNotFoundWhenListingTagsByReceipt() {
+    void throwRecipeNotFoundWhenListingTagsByRecipe() {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-        assertThrows(RecipeNotFoundException.class, () -> useCase.findByReceiptId(RecipeServiceTest.ID));
+        assertThrows(RecipeNotFoundException.class, () -> useCase.findByRecipeId(RecipeServiceTest.ID));
     }
 }

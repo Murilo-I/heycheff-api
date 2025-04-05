@@ -73,7 +73,7 @@ public class RecipeServiceTest {
     }
 
     @Test
-    void throwReceiptNotFoundWhenLoadingModal() {
+    void throwRecipeNotFoundWhenLoadingModal() {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
 
         var exception = assertThrows(RecipeNotFoundException.class,
@@ -83,7 +83,7 @@ public class RecipeServiceTest {
     }
 
     @Test
-    void saveReceiptSuccessfully() {
+    void saveRecipeSuccessfully() {
         var expected = recipe();
         when(repository.save(any())).thenReturn(expected);
         when(seqGenUseCase.generateSequence(anyString())).thenReturn(ID);
@@ -104,7 +104,7 @@ public class RecipeServiceTest {
     }
 
     @Test
-    void updateReceiptStatusSuccessfully() {
+    void updateRecipeStatusSuccessfully() {
         when(repository.save(any())).thenReturn(recipe());
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(recipe()));
 
@@ -113,7 +113,7 @@ public class RecipeServiceTest {
     }
 
     @Test
-    void throwReceiptNotFoundWhenUpdatingStatus() {
+    void throwRecipeNotFoundWhenUpdatingStatus() {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(RecipeNotFoundException.class,

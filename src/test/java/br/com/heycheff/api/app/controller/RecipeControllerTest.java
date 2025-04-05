@@ -99,7 +99,7 @@ class RecipeControllerTest {
 
     @Test
     @WithMockUser("heycheff")
-    void includeReceipt() throws Exception {
+    void includeRecipe() throws Exception {
         when(useCase.save(any(), any())).thenReturn(new RecipeId(recipe().getSeqId()));
 
         var formData = """

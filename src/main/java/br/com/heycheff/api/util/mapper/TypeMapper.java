@@ -72,7 +72,7 @@ public interface TypeMapper {
         );
     }
 
-    static RecipeFeed fromReceiptEntity(Recipe recipe, String thumb) {
+    static RecipeFeed fromRecipeEntity(Recipe recipe, String thumb) {
         var tags = recipe.getTags().stream().map(TypeMapper::fromTagId).toList();
         int estimatedTime = 0;
         try {

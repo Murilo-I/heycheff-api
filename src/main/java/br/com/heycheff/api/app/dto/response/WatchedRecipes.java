@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @Data
 public class WatchedRecipes implements Serializable {
-    private String receiptId;
+    private String recipeId;
     private boolean watchedEntirely;
 }
