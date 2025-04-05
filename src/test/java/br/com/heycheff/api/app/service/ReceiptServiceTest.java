@@ -30,6 +30,7 @@ public class ReceiptServiceTest {
     public static final String SCRAMBLED_EGGS = "scrambled eggs";
     public static final long ID = 1L;
     static final String THUMB = "thumb";
+    static final String USER_ID = "6744ef2d210d581f27826e05";
 
     ReceiptRepository repository = mock(ReceiptRepository.class);
     FileUseCase fileUseCase = mock(FileUseCase.class);
@@ -51,7 +52,7 @@ public class ReceiptServiceTest {
     }
 
     public static Receipt receipt() {
-        var receipt = new Receipt(SCRAMBLED_EGGS);
+        var receipt = new Receipt(SCRAMBLED_EGGS, USER_ID);
         var steps = new ArrayList<Step>();
         steps.add(step());
         receipt.setSteps(steps);
@@ -94,7 +95,7 @@ public class ReceiptServiceTest {
     }
 
     ReceiptRequest request() {
-        return new ReceiptRequest(SCRAMBLED_EGGS,
+        return new ReceiptRequest(SCRAMBLED_EGGS, USER_ID,
                 Collections.singletonList(new TagDTO(1, "salgado")));
     }
 

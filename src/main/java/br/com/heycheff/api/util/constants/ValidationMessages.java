@@ -3,6 +3,7 @@ package br.com.heycheff.api.util.constants;
 public class ValidationMessages {
 
     public static final String RECEIPT_TITLE = "O título é obrigatório.";
+    public static final String USER_ID = "O usuário é obrigatório";
     public static final String RECEIPT_TAGS = "Selecione ao menos uma categoria.";
     public static final String RECEIPT_THUMB = "Thumb não pode ser null.";
     public static final String STEP_NUMBER = "stepNumber não pode ser null.";

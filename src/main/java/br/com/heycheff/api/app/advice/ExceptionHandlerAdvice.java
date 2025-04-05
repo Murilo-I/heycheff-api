@@ -3,12 +3,16 @@ package br.com.heycheff.api.app.advice;
 import br.com.heycheff.api.app.dto.response.ErrorMessage;
 import br.com.heycheff.api.app.dto.response.Status;
 import br.com.heycheff.api.util.exception.*;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Collections;
+import java.util.HashMap;
 
 @ControllerAdvice
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
@@ -23,7 +27,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 new ErrorMessage(exception.getMessage(), new Status(
                         HttpStatus.NOT_FOUND.value(),
                         HttpStatus.NOT_FOUND.getReasonPhrase()
-                ))
+                ), Collections.emptyMap())
         );
     }
 
@@ -37,7 +41,22 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 new ErrorMessage(exception.getMessage(), new Status(
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase()
-                ))
+                ), Collections.emptyMap())
+        );
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<ErrorMessage> handleConstraintViolation(ConstraintViolationException exception) {
+        var mapErrors = new HashMap<String, String>();
+        exception.getConstraintViolations().forEach(constraint ->
+                mapErrors.put(constraint.getPropertyPath().toString(),
+                        constraint.getMessage())
+        );
+        return ResponseEntity.badRequest().body(
+                new ErrorMessage(exception.getMessage(), new Status(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase()
+                ), mapErrors)
         );
     }
 }

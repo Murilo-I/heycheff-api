@@ -60,11 +60,13 @@ public class ReceiptController {
                                              String titulo,
                                              @NotNull(message = ValidationMessages.RECEIPT_TAGS)
                                              String tags,
+                                             @NotNull(message = ValidationMessages.USER_ID)
+                                             String userId,
                                              @NotNull(message = ValidationMessages.RECEIPT_THUMB)
                                              MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
-        var receita = new ReceiptRequest(titulo, new Gson().fromJson(tags, listOfTags));
+        var receita = new ReceiptRequest(titulo, userId, new Gson().fromJson(tags, listOfTags));
         return ResponseEntity.status(HttpStatus.CREATED).body(useCase.save(receita, thumb));
     }
 

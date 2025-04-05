@@ -29,8 +29,9 @@ public class Receipt {
     private List<Step> steps;
     private List<Integer> tags;
 
-    public Receipt(String title) {
+    public Receipt(String title, String userId) {
         this.title = title;
+        this.ownerId = userId;
         this.dateTime = LocalDateTime.now();
         this.steps = Collections.emptyList();
         this.tags = Collections.emptyList();
