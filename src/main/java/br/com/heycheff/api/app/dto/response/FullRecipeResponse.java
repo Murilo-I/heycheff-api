@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FullRecipeResponse {
 
+    private String recipeId;
     private String title;
     private List<StepDTO> steps;
     private List<TagDTO> tags;

@@ -45,7 +45,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/recommended-recipes")
-    public ResponseEntity<Void> updateUserRecommendations(@PathVariable String id, RecommendationRequest request) {
+    public ResponseEntity<Void> updateUserRecommendations(@PathVariable String id,
+                                                          @RequestBody RecommendationRequest request) {
         useCase.updateRecommendationList(id, request.recipesIds());
         return ResponseEntity.ok().build();
     }

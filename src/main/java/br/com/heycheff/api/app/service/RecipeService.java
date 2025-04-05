@@ -83,6 +83,7 @@ public class RecipeService implements RecipeUseCase {
         var fullResponse = new ArrayList<FullRecipeResponse>();
         recipeRepository.findAll().forEach(recipe -> {
             var fullReceipt = FullRecipeResponse.builder()
+                    .recipeId(recipe.getId())
                     .title(recipe.getTitle())
                     .tags(recipe.getTags().stream()
                             .map(TypeMapper::fromTagId)
