@@ -34,7 +34,7 @@ public class RecipeController {
     public ResponseEntity<PageResponse<RecipeFeed>> loadFeed(@RequestParam Integer pageNum,
                                                              @RequestParam Integer pageSize,
                                                              @RequestParam(required = false)
-                                                              String userId) {
+                                                             String userId) {
         var pageRequest = PageRequest.of(pageNum, pageSize);
         if (Objects.isNull(userId))
             return ResponseEntity.ok(useCase.loadFeed(pageRequest));
@@ -63,13 +63,13 @@ public class RecipeController {
 
     @PostMapping
     public ResponseEntity<RecipeId> include(@NotBlank(message = ValidationMessages.RECEIPT_TITLE)
-                                             String titulo,
+                                            String titulo,
                                             @NotNull(message = ValidationMessages.RECEIPT_TAGS)
-                                             String tags,
+                                            String tags,
                                             @NotNull(message = ValidationMessages.USER_ID)
-                                             String userId,
+                                            String userId,
                                             @NotNull(message = ValidationMessages.RECEIPT_THUMB)
-                                             MultipartFile thumb) {
+                                            MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
         var receita = new RecipeRequest(titulo, userId, new Gson().fromJson(tags, listOfTags));

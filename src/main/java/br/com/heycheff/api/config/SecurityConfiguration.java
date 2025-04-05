@@ -84,6 +84,7 @@ public class SecurityConfiguration {
                         .requestMatchers(GET, "/receitas").permitAll()
                         .requestMatchers(GET, "/media**").permitAll()
                         .requestMatchers(GET, "/receitas/all").hasAuthority(Role.ADMIN.getAuthority())
+                        .requestMatchers(GET, "/user/all").hasAuthority(Role.ADMIN.getAuthority())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

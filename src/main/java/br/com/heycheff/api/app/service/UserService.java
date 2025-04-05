@@ -3,6 +3,7 @@ package br.com.heycheff.api.app.service;
 import br.com.heycheff.api.app.dto.request.FollowRequest;
 import br.com.heycheff.api.app.dto.request.UserRequest;
 import br.com.heycheff.api.app.dto.response.FollowResponse;
+import br.com.heycheff.api.app.dto.response.UserRecommendationResponse;
 import br.com.heycheff.api.app.dto.response.UserResponse;
 import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Role;
@@ -16,7 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static br.com.heycheff.api.util.mapper.TypeMapper.fromUser;
@@ -44,6 +48,9 @@ public class UserService implements UserUseCase {
                             .roles(Collections.singletonList(Role.USER))
                             .followersIds(Collections.emptyList())
                             .followingIds(Collections.emptyList())
+                            .lastLogin(LocalDateTime.now())
+                            .watchedRecipes(Collections.emptyList())
+                            .recommendedRecipes(Collections.emptyList())
                             .build()
             );
         } catch (Exception e) {
@@ -63,6 +70,22 @@ public class UserService implements UserUseCase {
         ).getTotalElements();
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return fromUser(user, recipeCount);
+    }
+
+    @Override
+    public List<UserRecommendationResponse> findAll() {
+        var response = new ArrayList<UserRecommendationResponse>();
+        userRepository.findAll().forEach(user -> {
+            var userRecommendation = UserRecommendationResponse.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .lastLogin(user.getLastLogin())
+                    .watchedRecipes(user.getWatchedRecipes())
+                    .recommendedRecipes(user.getRecommendedRecipes())
+                    .build();
+            response.add(userRecommendation);
+        });
+        return response;
     }
 
     @Override
@@ -93,5 +116,20 @@ public class UserService implements UserUseCase {
         userRepository.save(userToFollow);
 
         return new FollowResponse(userFollowing);
+    }
+
+    @Override
+    @Transactional
+    public void updateLastLogin(String userid) {
+        var user = userRepository.findById(userid).orElseThrow(UserNotFoundException::new);
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updateRecommendationList(String userId, List<String> recipesIds) {
+        var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.setRecommendedRecipes(recipesIds);
+        userRepository.save(user);
     }
 }

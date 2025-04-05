@@ -26,10 +26,6 @@ public class TokenService {
         this.keyEntry = keyEntry;
     }
 
-    public TokenDTO generateToken(Authentication authentication) {
-        return tokenize((User) authentication.getPrincipal());
-    }
-
     public TokenDTO generateToken(User user) {
         return tokenize(user);
     }

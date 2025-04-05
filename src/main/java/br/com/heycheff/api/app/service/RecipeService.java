@@ -100,7 +100,7 @@ public class RecipeService implements RecipeUseCase {
     @Transactional
     public RecipeId save(RecipeRequest request, MultipartFile thumb) {
         Recipe recipe = new Recipe(request.getTitulo(), request.getUserId());
-        recipe.setSeqId(sequenceUseCase.generateSequence(Recipe.RECEIPT_SEQUENCE));
+        recipe.setSeqId(sequenceUseCase.generateSequence(Recipe.RECIPE_SEQUENCE));
         recipe.setTags(request.getTags().stream().map(TagDTO::toEntity).toList());
         recipe.setThumb(fileUseCase.salvar(thumb, "thumbReceita" + recipe.getSeqId()));
         recipeRepository.save(recipe);

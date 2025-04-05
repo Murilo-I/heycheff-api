@@ -16,7 +16,7 @@ import java.util.List;
 public class Recipe {
 
     @Transient
-    public static final String RECEIPT_SEQUENCE = "recipe_sequence";
+    public static final String RECIPE_SEQUENCE = "recipe_sequence";
 
     @Id
     private String id;

@@ -105,6 +105,7 @@ class RecipeControllerTest {
         var formData = """
                 titulo:Camarão do Baiano
                 tags:[ { "id": 1, "tag": "Salgado" } ]
+                userId:6744ef2d210d581f27826e05
                 """;
 
         mvc.perform(post(URL)

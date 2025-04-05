@@ -39,7 +39,8 @@ class StepControllerTest {
         when(useCase.save(any(), any(), anyLong())).thenReturn(step());
 
         var formData = """
-                step:1
+                stepNumber:1
+                timeMinutes:60
                 modoPreparo:quebre 2 ovos e misture ao frango desfiado
                 produtos:[ { "desc": "ovo", "unidMedida": "unidade", "medida": 3 }, { "desc": "frango desfiado", "unidMedida": "grama", "medida": 300 } ]
                 """;
