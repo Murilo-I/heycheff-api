@@ -1,11 +1,11 @@
 package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.dto.TagDTO;
-import br.com.heycheff.api.app.dto.request.ReceiptRequest;
+import br.com.heycheff.api.app.dto.request.RecipeRequest;
 import br.com.heycheff.api.app.dto.response.*;
-import br.com.heycheff.api.app.usecase.ReceiptUseCase;
+import br.com.heycheff.api.app.usecase.RecipeUseCase;
 import br.com.heycheff.api.util.constants.ValidationMessages;
-import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
+import br.com.heycheff.api.util.exception.RecipeNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import jakarta.validation.constraints.NotBlank;
@@ -23,17 +23,17 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/receitas")
-public class ReceiptController {
-    final ReceiptUseCase useCase;
+public class RecipeController {
+    final RecipeUseCase useCase;
 
-    public ReceiptController(ReceiptUseCase useCase) {
+    public RecipeController(RecipeUseCase useCase) {
         this.useCase = useCase;
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<ReceiptFeed>> loadFeed(@RequestParam Integer pageNum,
-                                                              @RequestParam Integer pageSize,
-                                                              @RequestParam(required = false)
+    public ResponseEntity<PageResponse<RecipeFeed>> loadFeed(@RequestParam Integer pageNum,
+                                                             @RequestParam Integer pageSize,
+                                                             @RequestParam(required = false)
                                                               String userId) {
         var pageRequest = PageRequest.of(pageNum, pageSize);
         if (Objects.isNull(userId))
@@ -43,42 +43,42 @@ public class ReceiptController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<FullReceiptResponse>> getAll() {
+    public ResponseEntity<List<FullRecipeResponse>> getAll() {
         return ResponseEntity.ok(useCase.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReceiptModal> loadModal(@PathVariable Long id) {
+    public ResponseEntity<RecipeModal> loadModal(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(useCase.loadModal(id));
-        } catch (ReceiptNotFoundException e) {
+        } catch (RecipeNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{id}/next-step")
-    public ResponseEntity<ReceiptNextStep> nextStep(@PathVariable Long id) {
+    public ResponseEntity<RecipeNextStep> nextStep(@PathVariable Long id) {
         return ResponseEntity.ok(useCase.nextStep(id));
     }
 
     @PostMapping
-    public ResponseEntity<ReceiptId> include(@NotBlank(message = ValidationMessages.RECEIPT_TITLE)
+    public ResponseEntity<RecipeId> include(@NotBlank(message = ValidationMessages.RECEIPT_TITLE)
                                              String titulo,
-                                             @NotNull(message = ValidationMessages.RECEIPT_TAGS)
+                                            @NotNull(message = ValidationMessages.RECEIPT_TAGS)
                                              String tags,
-                                             @NotNull(message = ValidationMessages.USER_ID)
+                                            @NotNull(message = ValidationMessages.USER_ID)
                                              String userId,
-                                             @NotNull(message = ValidationMessages.RECEIPT_THUMB)
+                                            @NotNull(message = ValidationMessages.RECEIPT_THUMB)
                                              MultipartFile thumb) {
         Type listOfTags = new TypeToken<ArrayList<TagDTO>>() {
         }.getType();
-        var receita = new ReceiptRequest(titulo, userId, new Gson().fromJson(tags, listOfTags));
+        var receita = new RecipeRequest(titulo, userId, new Gson().fromJson(tags, listOfTags));
         return ResponseEntity.status(HttpStatus.CREATED).body(useCase.save(receita, thumb));
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStatus(@RequestBody ReceiptStatus status,
+    public void updateStatus(@RequestBody RecipeStatus status,
                              @PathVariable Long id) {
         useCase.updateStatus(status, id);
     }

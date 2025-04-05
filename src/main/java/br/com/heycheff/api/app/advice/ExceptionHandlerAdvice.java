@@ -17,7 +17,7 @@ import java.util.HashMap;
 @ControllerAdvice
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ReceiptNotFoundException.class,
+    @ExceptionHandler({RecipeNotFoundException.class,
             StepNotFoundException.class,
             UserNotFoundException.class,
             TagNotFoundException.class,
@@ -31,7 +31,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler({StepNotInReceiptException.class,
+    @ExceptionHandler({StepNotInRecipeException.class,
             MediaException.class,
             GoogleOauthException.class,
             BadCredentialsException.class,

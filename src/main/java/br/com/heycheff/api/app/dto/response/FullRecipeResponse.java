@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FullReceiptResponse {
+public class FullRecipeResponse {
 
     private String title;
     private List<StepDTO> steps;

@@ -11,8 +11,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static br.com.heycheff.api.app.service.ReceiptServiceTest.SCRAMBLED_EGGS;
-import static br.com.heycheff.api.app.service.ReceiptServiceTest.multipart;
+import static br.com.heycheff.api.app.service.RecipeServiceTest.SCRAMBLED_EGGS;
+import static br.com.heycheff.api.app.service.RecipeServiceTest.multipart;
 import static br.com.heycheff.api.app.service.StepServiceTest.step;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;

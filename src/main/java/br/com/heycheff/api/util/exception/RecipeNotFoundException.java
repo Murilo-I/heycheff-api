@@ -1,6 +1,6 @@
 package br.com.heycheff.api.util.exception;
 
-public class ReceiptNotFoundException extends RuntimeException {
+public class RecipeNotFoundException extends RuntimeException {
 
     @Override
     public String getMessage() {

@@ -54,7 +54,7 @@ class TagControllerTest {
         when(useCase.findByReceiptId(anyLong())).thenReturn(tags());
 
         mvc.perform(get(URL)
-                        .queryParam("receiptId", String.valueOf(1L)))
+                        .queryParam("recipeId", String.valueOf(1L)))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

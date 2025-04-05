@@ -2,8 +2,8 @@ package br.com.heycheff.api.app.service;
 
 import br.com.heycheff.api.app.usecase.TagUseCase;
 import br.com.heycheff.api.data.model.Tags;
-import br.com.heycheff.api.data.repository.ReceiptRepository;
-import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
+import br.com.heycheff.api.data.repository.RecipeRepository;
+import br.com.heycheff.api.util.exception.RecipeNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 
 class TagServiceTest {
 
-    ReceiptRepository repository = mock(ReceiptRepository.class);
+    RecipeRepository repository = mock(RecipeRepository.class);
     TagUseCase useCase = new TagService(repository);
 
     @Test
@@ -28,9 +28,9 @@ class TagServiceTest {
 
     @Test
     void listTagsByReceipt() {
-        when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(ReceiptServiceTest.receipt()));
+        when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(RecipeServiceTest.recipe()));
 
-        var tags = useCase.findByReceiptId(ReceiptServiceTest.ID);
+        var tags = useCase.findByReceiptId(RecipeServiceTest.ID);
 
         assertEquals(3, tags.size());
         assertEquals(Tags.VEGANO.getTag(), tags.get(2).getTag());
@@ -39,6 +39,6 @@ class TagServiceTest {
     @Test
     void throwReceiptNotFoundWhenListingTagsByReceipt() {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-        assertThrows(ReceiptNotFoundException.class, () -> useCase.findByReceiptId(ReceiptServiceTest.ID));
+        assertThrows(RecipeNotFoundException.class, () -> useCase.findByReceiptId(RecipeServiceTest.ID));
     }
 }

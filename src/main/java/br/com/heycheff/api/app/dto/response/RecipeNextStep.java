@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReceiptNextStep {
+public class RecipeNextStep {
 
     private List<StepDTO> steps;
     private Integer nextStep;

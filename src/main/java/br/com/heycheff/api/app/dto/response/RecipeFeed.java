@@ -1,16 +1,19 @@
-package br.com.heycheff.api.app.dto.request;
+package br.com.heycheff.api.app.dto.response;
 
 import br.com.heycheff.api.app.dto.TagDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class ReceiptRequest {
-
+public class RecipeFeed {
+    private Long id;
+    private String thumb;
     private String titulo;
-    private String userId;
     private List<TagDTO> tags;
+    private Integer estimatedTime;
 }

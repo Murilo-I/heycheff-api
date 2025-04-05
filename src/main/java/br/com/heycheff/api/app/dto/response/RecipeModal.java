@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ReceiptModal {
+public class RecipeModal {
 
     private String userId;
     private List<StepDTO> steps;

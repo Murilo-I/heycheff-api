@@ -17,5 +17,5 @@ public class UserResponse {
     private Integer followers;
     private List<String> followersIds;
     private Integer following;
-    private Long receiptsCount;
+    private Long recipesCount;
 }

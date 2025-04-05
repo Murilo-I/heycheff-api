@@ -7,7 +7,7 @@ import br.com.heycheff.api.app.dto.response.UserResponse;
 import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Role;
 import br.com.heycheff.api.data.model.User;
-import br.com.heycheff.api.data.repository.ReceiptRepository;
+import br.com.heycheff.api.data.repository.RecipeRepository;
 import br.com.heycheff.api.data.repository.UserRepository;
 import br.com.heycheff.api.util.exception.UserNotFoundException;
 import br.com.heycheff.api.util.exception.UserRegistrationException;
@@ -25,11 +25,11 @@ import static br.com.heycheff.api.util.mapper.TypeMapper.fromUser;
 public class UserService implements UserUseCase {
 
     final UserRepository userRepository;
-    final ReceiptRepository receiptRepository;
+    final RecipeRepository recipeRepository;
 
-    public UserService(UserRepository userRepository, ReceiptRepository receiptRepository) {
+    public UserService(UserRepository userRepository, RecipeRepository recipeRepository) {
         this.userRepository = userRepository;
-        this.receiptRepository = receiptRepository;
+        this.recipeRepository = recipeRepository;
     }
 
     @Override
@@ -58,11 +58,11 @@ public class UserService implements UserUseCase {
 
     @Override
     public UserResponse findById(String userId) {
-        var receiptCount = receiptRepository.findByOwnerId(
+        var recipeCount = recipeRepository.findByOwnerId(
                 userId, PageRequest.of(1, 1)
         ).getTotalElements();
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return fromUser(user, receiptCount);
+        return fromUser(user, recipeCount);
     }
 
     @Override

@@ -2,11 +2,11 @@ package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.dto.StepDTO;
 import br.com.heycheff.api.app.dto.response.PageResponse;
-import br.com.heycheff.api.app.dto.response.ReceiptFeed;
-import br.com.heycheff.api.app.dto.response.ReceiptId;
-import br.com.heycheff.api.app.dto.response.ReceiptModal;
-import br.com.heycheff.api.app.usecase.ReceiptUseCase;
-import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
+import br.com.heycheff.api.app.dto.response.RecipeFeed;
+import br.com.heycheff.api.app.dto.response.RecipeId;
+import br.com.heycheff.api.app.dto.response.RecipeModal;
+import br.com.heycheff.api.app.usecase.RecipeUseCase;
+import br.com.heycheff.api.util.exception.RecipeNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static br.com.heycheff.api.app.service.ReceiptServiceTest.multipart;
-import static br.com.heycheff.api.app.service.ReceiptServiceTest.receipt;
+import static br.com.heycheff.api.app.service.RecipeServiceTest.multipart;
+import static br.com.heycheff.api.app.service.RecipeServiceTest.recipe;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class ReceiptControllerTest {
+class RecipeControllerTest {
 
     static final long ID = 1L;
     static final String URL = "/receitas";
@@ -43,14 +43,14 @@ class ReceiptControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean
-    ReceiptUseCase useCase;
+    RecipeUseCase useCase;
 
     @Test
     @WithMockUser("heycheff")
     void loadFeed() throws Exception {
         when(useCase.loadFeed(PageRequest.of(1, 1)))
                 .thenReturn(new PageResponse<>(
-                        List.of(new ReceiptFeed(
+                        List.of(new RecipeFeed(
                                 ID, "thumb", "title", Collections.emptyList(), 15)
                         ), 1L)
                 );
@@ -79,8 +79,8 @@ class ReceiptControllerTest {
                 .andExpect(jsonPath("$.steps[0].modoPreparo", is("prepare")));
     }
 
-    private ReceiptModal modal() {
-        var modal = new ReceiptModal();
+    private RecipeModal modal() {
+        var modal = new RecipeModal();
         modal.setSteps(List.of(new StepDTO(
                 "path", 1, emptyList(), "prepare", 15
         )));
@@ -90,7 +90,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void modalNotFound() throws Exception {
-        doThrow(ReceiptNotFoundException.class).when(useCase).loadModal(anyLong());
+        doThrow(RecipeNotFoundException.class).when(useCase).loadModal(anyLong());
 
         mvc.perform(get(URL_TEMPLATE)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -100,7 +100,7 @@ class ReceiptControllerTest {
     @Test
     @WithMockUser("heycheff")
     void includeReceipt() throws Exception {
-        when(useCase.save(any(), any())).thenReturn(new ReceiptId(receipt().getSeqId()));
+        when(useCase.save(any(), any())).thenReturn(new RecipeId(recipe().getSeqId()));
 
         var formData = """
                 titulo:Camarão do Baiano
