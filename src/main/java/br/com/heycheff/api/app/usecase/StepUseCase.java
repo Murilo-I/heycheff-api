@@ -5,11 +5,11 @@ import br.com.heycheff.api.data.model.Step;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface StepUseCase {
-    StepDTO getStep(Integer stepNumber, Long receiptId);
+    StepDTO getStep(Integer stepNumber, Long recipeId);
 
-    Step save(StepDTO step, MultipartFile video, Long receiptId);
+    Step save(StepDTO step, MultipartFile video, Long recipeId);
 
-    Step delete(Integer stepNumber, Long receiptId);
+    Step delete(Integer stepNumber, Long recipeId);
 
-    Step update(StepDTO step, MultipartFile video, Integer stepNumber, Long receiptId);
+    Step update(StepDTO step, MultipartFile video, Integer stepNumber, Long recipeId);
 }

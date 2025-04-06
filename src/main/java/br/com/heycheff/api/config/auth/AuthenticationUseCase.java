@@ -46,11 +46,13 @@ public class AuthenticationUseCase {
     public TokenDTO authenticate(UserDTO user) {
         var usernamePasswordToken =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-
-        return tokenService.generateToken(authManager.authenticate(usernamePasswordToken));
+        var principal = (User) authManager.authenticate(usernamePasswordToken).getPrincipal();
+        userService.updateLastLogin(principal.getId());
+        return tokenService.generateToken(principal);
     }
 
     public TokenDTO authenticate(User user) {
+        userService.updateLastLogin(user.getId());
         return tokenService.generateToken(user);
     }
 

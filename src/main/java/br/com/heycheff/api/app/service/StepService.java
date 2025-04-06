@@ -6,12 +6,12 @@ import br.com.heycheff.api.app.usecase.FileUseCase;
 import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
 import br.com.heycheff.api.app.usecase.StepUseCase;
 import br.com.heycheff.api.data.model.ProductDescriptions;
-import br.com.heycheff.api.data.model.Receipt;
+import br.com.heycheff.api.data.model.Recipe;
 import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.ProductRepository;
-import br.com.heycheff.api.data.repository.ReceiptRepository;
-import br.com.heycheff.api.util.exception.ReceiptNotFoundException;
-import br.com.heycheff.api.util.exception.StepNotInReceiptException;
+import br.com.heycheff.api.data.repository.RecipeRepository;
+import br.com.heycheff.api.util.exception.RecipeNotFoundException;
+import br.com.heycheff.api.util.exception.StepNotInRecipeException;
 import br.com.heycheff.api.util.mapper.TypeMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,84 +22,84 @@ import java.util.Comparator;
 @Service
 @Transactional
 public class StepService implements StepUseCase {
-    private static final String STEP_NOT_IN_RECEIPT_MESSAGE =
+    private static final String STEP_NOT_IN_RECIPE_MESSAGE =
             "O Step de ID: %d não existe para a receita de ID: %d";
 
-    final ReceiptRepository receiptRepository;
+    final RecipeRepository recipeRepository;
     final ProductRepository productRepository;
     final FileUseCase fileUseCase;
     final SequenceGeneratorUseCase sequenceUseCase;
 
-    public StepService(ReceiptRepository receiptRepository, ProductRepository productRepository,
+    public StepService(RecipeRepository recipeRepository, ProductRepository productRepository,
                        FileUseCase fileUseCase, SequenceGeneratorUseCase sequenceUseCase) {
-        this.receiptRepository = receiptRepository;
+        this.recipeRepository = recipeRepository;
         this.productRepository = productRepository;
         this.fileUseCase = fileUseCase;
         this.sequenceUseCase = sequenceUseCase;
     }
 
     @Override
-    public StepDTO getStep(Integer stepNumber, Long receiptId) {
-        var receipt = validateReceipt(receiptId);
-        var step = validateStep(stepNumber, receipt);
+    public StepDTO getStep(Integer stepNumber, Long recipeId) {
+        var recipe = validateRecipe(recipeId);
+        var step = validateStep(stepNumber, recipe);
         return TypeMapper.fromStepEntity(step, fileUseCase.resolve(step.getPath()));
     }
 
     @Override
-    public Step save(StepDTO step, MultipartFile video, Long receiptId) {
-        var receipt = validateReceipt(receiptId);
+    public Step save(StepDTO step, MultipartFile video, Long recipeId) {
+        var recipe = validateRecipe(recipeId);
         var savedStep = new Step(sequenceUseCase.generateSequence(Step.STEP_SEQUENCE),
                 step.getStepNumber(), step.getModoPreparo(), step.getTimeMinutes());
 
         setProducts(step, savedStep);
         savedStep.setPath(fileUseCase.salvar(video,
-                "receitaStep_" + receiptId + "_" + savedStep.getStepNumber()));
+                "receitaStep_" + recipeId + "_" + savedStep.getStepNumber()));
 
-        receipt.getSteps().add(savedStep);
-        receiptRepository.save(receipt);
+        recipe.getSteps().add(savedStep);
+        recipeRepository.save(recipe);
 
         return savedStep;
     }
 
     @Override
-    public Step delete(Integer stepNumber, Long receiptId) {
-        var receipt = validateReceipt(receiptId);
-        var delStep = validateStep(stepNumber, receipt);
+    public Step delete(Integer stepNumber, Long recipeId) {
+        var recipe = validateRecipe(recipeId);
+        var delStep = validateStep(stepNumber, recipe);
 
         fileUseCase.delete(delStep.getPath());
-        receipt.getSteps().remove(delStep);
-        receiptRepository.save(receipt);
+        recipe.getSteps().remove(delStep);
+        recipeRepository.save(recipe);
 
         return delStep;
     }
 
     @Override
-    public Step update(StepDTO step, MultipartFile video, Integer stepNumber, Long receiptId) {
-        var updStep = delete(stepNumber, receiptId);
-        var receipt = validateReceipt(receiptId);
-        var steps = receipt.getSteps();
+    public Step update(StepDTO step, MultipartFile video, Integer stepNumber, Long recipeId) {
+        var updStep = delete(stepNumber, recipeId);
+        var recipe = validateRecipe(recipeId);
+        var steps = recipe.getSteps();
 
         setProducts(step, updStep);
         updStep.setStepNumber(step.getStepNumber());
         updStep.setPreparationMode(step.getModoPreparo());
         updStep.setPath(fileUseCase.salvar(video,
-                "receitaStep_" + receiptId + "_" + updStep.getStepNumber()));
+                "receitaStep_" + recipeId + "_" + updStep.getStepNumber()));
 
         steps.add(updStep);
-        receipt.setSteps(steps.stream().sorted(Comparator
+        recipe.setSteps(steps.stream().sorted(Comparator
                 .comparing(Step::getStepNumber)).toList());
-        receiptRepository.save(receipt);
+        recipeRepository.save(recipe);
         return updStep;
     }
 
-    private Receipt validateReceipt(Long receiptId) {
-        return receiptRepository.findBySeqId(receiptId).orElseThrow(ReceiptNotFoundException::new);
+    private Recipe validateRecipe(Long recipeId) {
+        return recipeRepository.findBySeqId(recipeId).orElseThrow(RecipeNotFoundException::new);
     }
 
-    private Step validateStep(Integer stepNumber, Receipt receipt) {
-        return receipt.getSteps().stream().filter(step -> step.getStepNumber().equals(stepNumber))
-                .findFirst().orElseThrow(() -> new StepNotInReceiptException(
-                        String.format(STEP_NOT_IN_RECEIPT_MESSAGE, stepNumber, receipt.getSeqId())
+    private Step validateStep(Integer stepNumber, Recipe recipe) {
+        return recipe.getSteps().stream().filter(step -> step.getStepNumber().equals(stepNumber))
+                .findFirst().orElseThrow(() -> new StepNotInRecipeException(
+                        String.format(STEP_NOT_IN_RECIPE_MESSAGE, stepNumber, recipe.getSeqId())
                 ));
     }
 

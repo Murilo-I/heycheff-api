@@ -13,10 +13,10 @@ import java.util.List;
 @Data
 @Document
 @NoArgsConstructor
-public class Receipt {
+public class Recipe {
 
     @Transient
-    public static final String RECEIPT_SEQUENCE = "receipt_sequence";
+    public static final String RECIPE_SEQUENCE = "recipe_sequence";
 
     @Id
     private String id;
@@ -29,8 +29,9 @@ public class Receipt {
     private List<Step> steps;
     private List<Integer> tags;
 
-    public Receipt(String title) {
+    public Recipe(String title, String userId) {
         this.title = title;
+        this.ownerId = userId;
         this.dateTime = LocalDateTime.now();
         this.steps = Collections.emptyList();
         this.tags = Collections.emptyList();

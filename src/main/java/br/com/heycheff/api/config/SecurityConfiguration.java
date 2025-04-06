@@ -1,6 +1,7 @@
 package br.com.heycheff.api.config;
 
 import br.com.heycheff.api.config.auth.AuthenticationFilter;
+import br.com.heycheff.api.data.model.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +24,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @EnableWebMvc
 @EnableWebSecurity
@@ -82,6 +82,9 @@ public class SecurityConfiguration {
                         .requestMatchers(POST, "/auth/clerk").permitAll()
                         .requestMatchers(GET, "/receitas").permitAll()
                         .requestMatchers(GET, "/media**").permitAll()
+                        .requestMatchers(GET, "/receitas/all").hasAuthority(Role.ADMIN.getAuthority())
+                        .requestMatchers(GET, "/user/all").hasAuthority(Role.ADMIN.getAuthority())
+                        .requestMatchers(PATCH, "/user/{id}/recommended-recipes").hasAuthority(Role.ADMIN.getAuthority())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

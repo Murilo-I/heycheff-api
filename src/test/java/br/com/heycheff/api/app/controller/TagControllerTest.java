@@ -50,11 +50,11 @@ class TagControllerTest {
 
     @Test
     @WithMockUser("heycheff")
-    void listTagsByReceipt() throws Exception {
-        when(useCase.findByReceiptId(anyLong())).thenReturn(tags());
+    void listTagsByRecipe() throws Exception {
+        when(useCase.findByRecipeId(anyLong())).thenReturn(tags());
 
         mvc.perform(get(URL)
-                        .queryParam("receiptId", String.valueOf(1L)))
+                        .queryParam("recipeId", String.valueOf(1L)))
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

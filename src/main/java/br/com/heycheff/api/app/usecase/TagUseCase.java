@@ -7,5 +7,5 @@ import java.util.List;
 public interface TagUseCase {
     List<TagDTO> listAll();
 
-    List<TagDTO> findByReceiptId(Long id);
+    List<TagDTO> findByRecipeId(Long id);
 }

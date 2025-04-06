@@ -1,5 +1,6 @@
 package br.com.heycheff.api.data.model;
 
+import br.com.heycheff.api.app.dto.response.WatchedRecipe;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,15 +10,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+@Getter
+@Setter
 @Builder
 @Document
 public class User implements UserDetails {
 
     @Id
-    @Getter
     private String id;
     @Indexed(unique = true)
     private String email;
@@ -25,12 +29,11 @@ public class User implements UserDetails {
     @Indexed(unique = true)
     private String username;
     private List<Role> roles;
-    @Getter
-    @Setter
     private List<String> followersIds;
-    @Getter
-    @Setter
     private List<String> followingIds;
+    private LocalDateTime lastLogin;
+    private Set<WatchedRecipe> watchedRecipes;
+    private List<String> recommendedRecipes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -4,6 +4,7 @@ import br.com.heycheff.api.app.dto.StepDTO;
 import br.com.heycheff.api.app.dto.request.StepRequest;
 import br.com.heycheff.api.app.usecase.StepUseCase;
 import br.com.heycheff.api.data.model.Step;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class StepController {
     }
 
     @PostMapping
-    public ResponseEntity<Step> save(StepRequest request, @PathVariable Long id) {
+    public ResponseEntity<Step> save(@Valid StepRequest request, @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(useCase.save(fromStepRequest(request), request.getVideo(), id));
     }
@@ -38,7 +39,7 @@ public class StepController {
     }
 
     @PatchMapping("/{stepNumber}")
-    public ResponseEntity<Step> update(StepRequest request, @PathVariable Integer stepNumber,
+    public ResponseEntity<Step> update(@Valid StepRequest request, @PathVariable Integer stepNumber,
                                        @PathVariable Long id) {
         return ResponseEntity.ok(useCase.update(fromStepRequest(request),
                 request.getVideo(), stepNumber, id));

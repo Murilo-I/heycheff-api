@@ -1,6 +1,6 @@
 package br.com.heycheff.api.util.exception;
 
-public class ReceiptEstimatedTimeException extends RuntimeException {
+public class RecipeEstimatedTimeException extends RuntimeException {
 
     @Override
     public String getMessage() {
