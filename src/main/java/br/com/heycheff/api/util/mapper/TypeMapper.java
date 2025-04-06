@@ -78,7 +78,7 @@ public interface TypeMapper {
         try {
             estimatedTime = recipe.getSteps().stream().map(Step::getTimeMinutes)
                     .reduce(Integer::sum).orElseThrow(RecipeEstimatedTimeException::new);
-        } catch (NullPointerException ignored) {
+        } catch (NullPointerException | RecipeEstimatedTimeException ignored) {
         }
         return new RecipeFeed(
                 recipe.getSeqId(), thumb, recipe.getTitle(), tags, estimatedTime

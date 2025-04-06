@@ -5,6 +5,7 @@ import br.com.heycheff.api.app.dto.request.UserRequest;
 import br.com.heycheff.api.app.dto.response.FollowResponse;
 import br.com.heycheff.api.app.dto.response.UserRecommendationResponse;
 import br.com.heycheff.api.app.dto.response.UserResponse;
+import br.com.heycheff.api.app.dto.response.WatchedRecipe;
 import br.com.heycheff.api.data.model.User;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface UserUseCase {
     void updateLastLogin(String userid);
 
     void updateRecommendationList(String userId, List<String> recipesIds);
+
+    void appendWatchedVideo(WatchedRecipe watchedRecipe);
 }

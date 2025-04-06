@@ -7,6 +7,7 @@ import br.com.heycheff.api.app.dto.response.*;
 import br.com.heycheff.api.app.usecase.FileUseCase;
 import br.com.heycheff.api.app.usecase.RecipeUseCase;
 import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
+import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Recipe;
 import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.RecipeRepository;
@@ -32,12 +33,14 @@ public class RecipeService implements RecipeUseCase {
     final RecipeRepository recipeRepository;
     final FileUseCase fileUseCase;
     final SequenceGeneratorUseCase sequenceUseCase;
+    final UserUseCase userUseCase;
 
     public RecipeService(RecipeRepository recipeRepository, FileUseCase fileUseCase,
-                         SequenceGeneratorUseCase sequenceUseCase) {
+                         SequenceGeneratorUseCase sequenceUseCase, UserUseCase userUseCase) {
         this.recipeRepository = recipeRepository;
         this.fileUseCase = fileUseCase;
         this.sequenceUseCase = sequenceUseCase;
+        this.userUseCase = userUseCase;
     }
 
     @Override
@@ -75,6 +78,7 @@ public class RecipeService implements RecipeUseCase {
         modal.setUserId(recipe.getOwnerId());
         modal.setSteps(steps);
 
+        userUseCase.appendWatchedVideo(new WatchedRecipe(recipe.getId(), false));
         return modal;
     }
 
@@ -131,5 +135,11 @@ public class RecipeService implements RecipeUseCase {
 
     private Recipe validateRecipe(Long recipeId) {
         return recipeRepository.findBySeqId(recipeId).orElseThrow(RecipeNotFoundException::new);
+    }
+
+    @Override
+    public void markReceiptAsWatched(Long id) {
+        var recipe = validateRecipe(id);
+        userUseCase.appendWatchedVideo(new WatchedRecipe(recipe.getId(), true));
     }
 }

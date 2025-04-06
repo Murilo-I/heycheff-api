@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -19,6 +20,6 @@ public class UserRecommendationResponse {
     private String username;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastLogin;
-    private List<WatchedRecipes> watchedRecipes;
+    private Set<WatchedRecipe> watchedRecipes;
     private List<String> recommendedRecipes;
 }

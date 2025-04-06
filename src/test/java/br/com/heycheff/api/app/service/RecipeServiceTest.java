@@ -6,6 +6,7 @@ import br.com.heycheff.api.app.dto.response.RecipeStatus;
 import br.com.heycheff.api.app.usecase.FileUseCase;
 import br.com.heycheff.api.app.usecase.RecipeUseCase;
 import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
+import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Recipe;
 import br.com.heycheff.api.data.model.Step;
 import br.com.heycheff.api.data.repository.RecipeRepository;
@@ -35,7 +36,8 @@ public class RecipeServiceTest {
     RecipeRepository repository = mock(RecipeRepository.class);
     FileUseCase fileUseCase = mock(FileUseCase.class);
     SequenceGeneratorUseCase seqGenUseCase = mock(SequenceGeneratorUseCase.class);
-    RecipeUseCase recipeUseCase = new RecipeService(repository, fileUseCase, seqGenUseCase);
+    UserUseCase userUseCase = mock(UserUseCase.class);
+    RecipeUseCase recipeUseCase = new RecipeService(repository, fileUseCase, seqGenUseCase, userUseCase);
 
     @Test
     void loadFeedSuccessfully() {

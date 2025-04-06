@@ -21,4 +21,6 @@ public interface RecipeUseCase {
     void updateStatus(RecipeStatus dto, Long id);
 
     RecipeNextStep nextStep(Long id);
+
+    void markReceiptAsWatched(Long id);
 }

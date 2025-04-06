@@ -5,6 +5,8 @@ import br.com.heycheff.api.app.dto.request.UserRequest;
 import br.com.heycheff.api.app.dto.response.FollowResponse;
 import br.com.heycheff.api.app.dto.response.UserRecommendationResponse;
 import br.com.heycheff.api.app.dto.response.UserResponse;
+import br.com.heycheff.api.app.dto.response.WatchedRecipe;
+import br.com.heycheff.api.app.usecase.AuthenticationFacade;
 import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Role;
 import br.com.heycheff.api.data.model.User;
@@ -30,10 +32,13 @@ public class UserService implements UserUseCase {
 
     final UserRepository userRepository;
     final RecipeRepository recipeRepository;
+    final AuthenticationFacade authFacade;
 
-    public UserService(UserRepository userRepository, RecipeRepository recipeRepository) {
+    public UserService(UserRepository userRepository, RecipeRepository recipeRepository,
+                       AuthenticationFacade authFacade) {
         this.userRepository = userRepository;
         this.recipeRepository = recipeRepository;
+        this.authFacade = authFacade;
     }
 
     @Override
@@ -49,7 +54,7 @@ public class UserService implements UserUseCase {
                             .followersIds(Collections.emptyList())
                             .followingIds(Collections.emptyList())
                             .lastLogin(LocalDateTime.now())
-                            .watchedRecipes(Collections.emptyList())
+                            .watchedRecipes(Collections.emptySet())
                             .recommendedRecipes(Collections.emptyList())
                             .build()
             );
@@ -131,5 +136,31 @@ public class UserService implements UserUseCase {
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.setRecommendedRecipes(recipesIds);
         userRepository.save(user);
+    }
+
+    @Override
+    public void appendWatchedVideo(WatchedRecipe watchedRecipe) {
+        var principal = (User) authFacade.getAuthentication().getPrincipal();
+        var user = userRepository.findById(principal.getId()).orElseThrow(UserNotFoundException::new);
+        var recipes = user.getWatchedRecipes();
+
+        if (watchedRecipe.isWatchedEntirely())
+            recipes.stream().filter(w -> w.getRecipeId().equals(watchedRecipe.getRecipeId())
+                            && Boolean.FALSE.equals(w.isWatchedEntirely()))
+                    .findFirst().ifPresent(recipes::remove);
+        else {
+            var isWatched = recipes.stream().filter(w -> w.getRecipeId()
+                            .equals(watchedRecipe.getRecipeId()) && w.isWatchedEntirely())
+                    .findFirst();
+
+            if (isWatched.isPresent()) return;
+        }
+
+        recipes.add(watchedRecipe);
+
+        if (!principal.getWatchedRecipes().equals(recipes)) {
+            user.setWatchedRecipes(recipes);
+            userRepository.save(user);
+        }
     }
 }

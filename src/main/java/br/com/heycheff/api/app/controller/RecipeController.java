@@ -82,4 +82,10 @@ public class RecipeController {
                              @PathVariable Long id) {
         useCase.updateStatus(status, id);
     }
+
+    @PostMapping("/{id}/complete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void recipeCompleted(@PathVariable Long id) {
+        useCase.markReceiptAsWatched(id);
+    }
 }

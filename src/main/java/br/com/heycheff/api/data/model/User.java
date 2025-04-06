@@ -1,6 +1,6 @@
 package br.com.heycheff.api.data.model;
 
-import br.com.heycheff.api.app.dto.response.WatchedRecipes;
+import br.com.heycheff.api.app.dto.response.WatchedRecipe;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class User implements UserDetails {
     private List<String> followersIds;
     private List<String> followingIds;
     private LocalDateTime lastLogin;
-    private List<WatchedRecipes> watchedRecipes;
+    private Set<WatchedRecipe> watchedRecipes;
     private List<String> recommendedRecipes;
 
     @Override
