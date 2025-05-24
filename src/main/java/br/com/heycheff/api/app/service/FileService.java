@@ -8,6 +8,7 @@ import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
@@ -83,7 +84,9 @@ public class FileService implements FileUseCase {
     @Override
     public Resource getMedia(String fileName) {
         if (isProfileProd)
-            throw new MethodNotAllowedException(HttpMethod.GET, Collections.emptyList());
+            return new ByteArrayResource(
+                    blobUseCase.getFileOutputStream(fileName).toByteArray()
+            );
 
         Path baseDir = Paths.get(getBasePath());
         Path filePath = baseDir.resolve(fileName);
