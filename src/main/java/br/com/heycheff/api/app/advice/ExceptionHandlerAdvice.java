@@ -68,7 +68,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                         new Status(
                                 HttpStatus.METHOD_NOT_ALLOWED.value(),
                                 exception.getMessage()
-                        ))
+                        ), Collections.emptyMap())
         );
     }
 }
