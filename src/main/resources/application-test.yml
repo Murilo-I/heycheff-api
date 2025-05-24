@@ -9,6 +9,8 @@ cors:
 
 heycheff:
   azure:
+    account-name: acc-name
+    account-key: acc-key
     blob-storage: blob
     container-name: blob-container
   oauth:

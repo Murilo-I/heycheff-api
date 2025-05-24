@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Collections;
@@ -57,6 +58,17 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase()
                 ), mapErrors)
+        );
+    }
+
+    @ExceptionHandler(MethodNotAllowedException.class)
+    public ResponseEntity<ErrorMessage> handleMethodNotAllowed(RuntimeException exception) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
+                new ErrorMessage("GET /media is not allowed",
+                        new Status(
+                                HttpStatus.METHOD_NOT_ALLOWED.value(),
+                                exception.getMessage()
+                        ))
         );
     }
 }
