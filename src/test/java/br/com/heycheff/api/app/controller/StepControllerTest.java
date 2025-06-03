@@ -7,18 +7,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static br.com.heycheff.api.app.service.RecipeServiceTest.SCRAMBLED_EGGS;
-import static br.com.heycheff.api.app.service.RecipeServiceTest.multipart;
 import static br.com.heycheff.api.app.service.StepServiceTest.step;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -38,17 +38,21 @@ class StepControllerTest {
     void saveStep() throws Exception {
         when(useCase.save(any(), any(), anyLong())).thenReturn(step());
 
-        var formData = """
-                stepNumber:1
-                timeMinutes:60
-                modoPreparo:quebre 2 ovos e misture ao frango desfiado
-                produtos:[ { "desc": "ovo", "unidMedida": "unidade", "medida": 3 }, { "desc": "frango desfiado", "unidMedida": "grama", "medida": 300 } ]
-                """;
+        var mockFile = new MockMultipartFile(
+                "video",
+                "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
 
-        mvc.perform(post(URL)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .content(formData)
-                        .content(multipart().getBytes()))
+        mvc.perform(multipart(URL)
+                        .file(mockFile)
+                        .param("stepNumber", "1")
+                        .param("timeMinutes", "60")
+                        .param("modoPreparo", "quebre 2 ovos e misture ao frango desfiado")
+                        .param("produtos", "[ { \"desc\": \"ovo\", \"unidMedida\": \"unidade\", " +
+                                "\"medida\": 3 }, { \"desc\": \"frango desfiado\", \"unidMedida\": \"grama\", " +
+                                "\"medida\": 300 } ]"))
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

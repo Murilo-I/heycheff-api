@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,7 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static br.com.heycheff.api.app.service.RecipeServiceTest.multipart;
 import static br.com.heycheff.api.app.service.RecipeServiceTest.recipe;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.is;
@@ -102,16 +102,18 @@ class RecipeControllerTest {
     void includeRecipe() throws Exception {
         when(useCase.save(any(), any())).thenReturn(new RecipeId(recipe().getSeqId()));
 
-        var formData = """
-                titulo:Camarão do Baiano
-                tags:[ { "id": 1, "tag": "Salgado" } ]
-                userId:6744ef2d210d581f27826e05
-                """;
+        var mockFile = new MockMultipartFile(
+                "thumb",
+                "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
 
-        mvc.perform(post(URL)
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .content(formData)
-                        .content(multipart().getBytes()))
+        mvc.perform(multipart(URL)
+                        .file(mockFile)
+                        .param("titulo", "Camarão do Baiano")
+                        .param("tags", "[ { \"id\": 1, \"tag\": \"Salgado\" } ]")
+                        .param("userId", "6744ef2d210d581f27826e05"))
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
