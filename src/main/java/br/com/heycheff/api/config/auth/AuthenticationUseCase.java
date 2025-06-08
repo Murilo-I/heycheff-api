@@ -3,7 +3,7 @@ package br.com.heycheff.api.config.auth;
 import br.com.heycheff.api.app.dto.TokenDTO;
 import br.com.heycheff.api.app.dto.UserDTO;
 import br.com.heycheff.api.app.dto.request.ClerkRequest;
-import br.com.heycheff.api.app.service.UserService;
+import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.User;
 import br.com.heycheff.api.util.exception.AccountNotRegisteredException;
 import br.com.heycheff.api.util.exception.GoogleOauthException;
@@ -33,11 +33,11 @@ public class AuthenticationUseCase {
 
     final AuthenticationManager authManager;
     final TokenService tokenService;
-    final UserService userService;
+    final UserUseCase userService;
 
     public AuthenticationUseCase(AuthenticationManager authManager,
                                  TokenService tokenService,
-                                 UserService userService) {
+                                 UserUseCase userService) {
         this.authManager = authManager;
         this.tokenService = tokenService;
         this.userService = userService;

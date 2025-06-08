@@ -1,6 +1,7 @@
 package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.usecase.StepUseCase;
+import br.com.heycheff.api.config.TestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,8 +13,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static br.com.heycheff.api.app.service.RecipeServiceTest.SCRAMBLED_EGGS;
-import static br.com.heycheff.api.app.service.StepServiceTest.step;
+import static br.com.heycheff.api.data.helper.DataHelper.SCRAMBLED_EGGS;
+import static br.com.heycheff.api.data.helper.DataHelper.step;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -21,9 +22,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SpringBootTest(classes = {TestConfiguration.class})
 class StepControllerTest {
 
     static final String URL = "/receitas/1/steps";

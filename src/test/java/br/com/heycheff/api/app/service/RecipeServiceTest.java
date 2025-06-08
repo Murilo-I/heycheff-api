@@ -1,43 +1,31 @@
 package br.com.heycheff.api.app.service;
 
-import br.com.heycheff.api.app.dto.TagDTO;
-import br.com.heycheff.api.app.dto.request.RecipeRequest;
 import br.com.heycheff.api.app.dto.response.RecipeStatus;
-import br.com.heycheff.api.app.usecase.FileUseCase;
-import br.com.heycheff.api.app.usecase.RecipeUseCase;
-import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
-import br.com.heycheff.api.app.usecase.UserUseCase;
-import br.com.heycheff.api.data.model.Recipe;
-import br.com.heycheff.api.data.model.Step;
-import br.com.heycheff.api.data.repository.RecipeRepository;
-import br.com.heycheff.api.util.exception.RecipeNotFoundException;
+import br.com.heycheff.api.app.usecase.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.mock.web.MockMultipartFile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static br.com.heycheff.api.app.service.StepServiceTest.step;
+import static br.com.heycheff.api.data.helper.DataHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class RecipeServiceTest {
+class RecipeServiceTest {
 
-    public static final String SCRAMBLED_EGGS = "scrambled eggs";
-    public static final long ID = 1L;
-    static final String THUMB = "thumb";
-    static final String USER_ID = "6744ef2d210d581f27826e05";
-
-    RecipeRepository repository = mock(RecipeRepository.class);
+    RecipeDataUseCase repository = mock(RecipeDataUseCase.class);
     FileUseCase fileUseCase = mock(FileUseCase.class);
     SequenceGeneratorUseCase seqGenUseCase = mock(SequenceGeneratorUseCase.class);
     UserUseCase userUseCase = mock(UserUseCase.class);
     RecipeUseCase recipeUseCase = new RecipeService(repository, fileUseCase, seqGenUseCase, userUseCase);
+
+    @BeforeEach
+    void validateRecipe() {
+        when(repository.validateRecipe(anyLong())).thenReturn(recipe());
+    }
 
     @Test
     void loadFeedSuccessfully() {
@@ -47,27 +35,14 @@ public class RecipeServiceTest {
                         )
                 );
 
-        var feed = recipeUseCase.loadFeed(PageRequest.of(1, 1));
+        var feed = recipeUseCase.loadFeed(pageRequest());
 
         assertFalse(feed.items().isEmpty());
         assertEquals(SCRAMBLED_EGGS, feed.items().get(0).getTitulo());
     }
 
-    public static Recipe recipe() {
-        var recipe = new Recipe(SCRAMBLED_EGGS, USER_ID);
-        var steps = new ArrayList<Step>();
-        steps.add(step());
-        recipe.setSteps(steps);
-        recipe.setTags(List.of(1, 2, 3));
-        recipe.setThumb(THUMB);
-        recipe.setSeqId(ID);
-        return recipe;
-    }
-
     @Test
     void loadModalSuccessfully() {
-        when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(recipe()));
-
         var modal = recipeUseCase.loadModal(ID);
 
         assertNotNull(modal);
@@ -75,19 +50,9 @@ public class RecipeServiceTest {
     }
 
     @Test
-    void throwRecipeNotFoundWhenLoadingModal() {
-        when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-
-        var exception = assertThrows(RecipeNotFoundException.class,
-                () -> recipeUseCase.loadModal(ID));
-
-        assertEquals("Receita Not Found!", exception.getMessage());
-    }
-
-    @Test
     void saveRecipeSuccessfully() {
         var expected = recipe();
-        when(repository.save(any())).thenReturn(expected);
+        doNothing().when(repository).persist(any());
         when(seqGenUseCase.generateSequence(anyString())).thenReturn(ID);
         when(fileUseCase.salvar(any(), anyString())).thenReturn(THUMB);
 
@@ -96,34 +61,55 @@ public class RecipeServiceTest {
         assertEquals(expected.getSeqId(), recipe.getSeqId());
     }
 
-    RecipeRequest request() {
-        return new RecipeRequest(SCRAMBLED_EGGS, USER_ID,
-                Collections.singletonList(new TagDTO(1, "salgado")));
-    }
-
-    public static MockMultipartFile multipart() {
-        return new MockMultipartFile("multipart", new byte[]{});
-    }
-
     @Test
     void updateRecipeStatusSuccessfully() {
-        when(repository.save(any())).thenReturn(recipe());
-        when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(recipe()));
+        doNothing().when(repository).persist(any());
 
         assertDoesNotThrow(() -> recipeUseCase.updateStatus(status(), ID));
-        verify(repository, times(1)).save(any());
-    }
-
-    @Test
-    void throwRecipeNotFoundWhenUpdatingStatus() {
-        when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-
-        assertThrows(RecipeNotFoundException.class,
-                () -> recipeUseCase.updateStatus(status(), ID));
-        verify(repository, times(0)).save(any());
+        verify(repository, times(1)).persist(any());
     }
 
     RecipeStatus status() {
         return new RecipeStatus(true);
+    }
+
+    @Test
+    void loadUserContentSuccessfully() {
+        when(repository.findByUserId(anyString(), any()))
+                .thenReturn(new PageImpl<>(
+                                Collections.singletonList(recipe())
+                        )
+                );
+
+        var content = recipeUseCase.loadUserContent(pageRequest(), USER_ID);
+
+        assertFalse(content.items().isEmpty());
+        assertEquals(3, content.items().get(0).getTags().size());
+    }
+
+    @Test
+    void shouldLoadAllRecipes() {
+        when(repository.findAll()).thenReturn(List.of(recipe(), recipe(), recipe()));
+
+        var fullResponse = recipeUseCase.findAll();
+
+        assertFalse(fullResponse.isEmpty());
+        assertEquals(3, fullResponse.size());
+    }
+
+    @Test
+    void shouldGetNextRecipeStep() {
+        when(fileUseCase.resolve(anyString())).thenReturn(THUMB);
+
+        var next = recipeUseCase.nextStep(1L);
+
+        assertEquals(3, next.getNextStep());
+    }
+
+    @Test
+    void shouldCallUserAppendWatchedVideo() {
+        doNothing().when(userUseCase).appendWatchedVideo(any());
+
+        assertDoesNotThrow(() -> recipeUseCase.markReceiptAsWatched(1L));
     }
 }
