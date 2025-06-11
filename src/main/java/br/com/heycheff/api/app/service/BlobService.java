@@ -4,49 +4,23 @@ import br.com.heycheff.api.app.usecase.BlobUseCase;
 import br.com.heycheff.api.util.exception.MediaException;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
-import com.azure.storage.common.StorageSharedKeyCredential;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 @Service
 public class BlobService implements BlobUseCase {
 
-    private static final String TEST = "test";
-
     @Value("${heycheff.azure.container-name}")
     String containerName;
-    @Value("${heycheff.azure.blob-storage}")
-    String blobStorageConnectionURI;
-    @Value("${heycheff.azure.account-name}")
-    String accountName;
-    @Value("${heycheff.azure.account-key}")
-    String accountKey;
 
-    private BlobServiceClient blobServiceClient;
-    final Environment environment;
+    private final BlobServiceClient blobServiceClient;
 
-    public BlobService(Environment environment) {
-        this.environment = environment;
-    }
-
-    @PostConstruct
-    public void init() {
-        var activeProfiles = Arrays.stream(environment.getActiveProfiles()).toList();
-
-        if (activeProfiles.contains(TEST)) return;
-
-        blobServiceClient = new BlobServiceClientBuilder()
-                .connectionString(blobStorageConnectionURI)
-                .credential(new StorageSharedKeyCredential(accountName, accountKey))
-                .buildClient();
+    public BlobService(BlobServiceClient blobServiceClient) {
+        this.blobServiceClient = blobServiceClient;
     }
 
     @Override

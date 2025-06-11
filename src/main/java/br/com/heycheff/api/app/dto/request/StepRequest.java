@@ -15,6 +15,7 @@ public class StepRequest {
     @NotBlank(message = ValidationMessages.STEP_PREPARATION_MODE)
     private String modoPreparo;
     @Min(value = 2, message = ValidationMessages.STEP_TIME_MINUTES)
+    @NotNull(message =  ValidationMessages.STEP_TIME_MINUTES)
     private Integer timeMinutes;
     @NotNull(message = ValidationMessages.STEP_PRODUCTS)
     private String produtos;

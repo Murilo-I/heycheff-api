@@ -1,4 +1,4 @@
-media-server-paths: /home/heycheff/media
+media-server-paths: src/test/resources
 
 spring:
   cache:
@@ -9,8 +9,8 @@ cors:
 
 heycheff:
   azure:
-    account-name: acc-name
     account-key: acc-key
+    account-name: acc-name
     blob-storage: blob
     container-name: blob-container
   oauth:

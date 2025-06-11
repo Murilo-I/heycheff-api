@@ -4,7 +4,6 @@ import br.com.heycheff.api.app.dto.TokenDTO;
 import br.com.heycheff.api.data.model.User;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.security.KeyStore;

@@ -2,6 +2,7 @@ package br.com.heycheff.api.app.controller;
 
 import br.com.heycheff.api.app.dto.ProductDescDTO;
 import br.com.heycheff.api.app.usecase.ProductUseCase;
+import br.com.heycheff.api.config.TestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,9 +20,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SpringBootTest(classes = {TestConfiguration.class})
 class ProductControllerTest {
 
     @Autowired

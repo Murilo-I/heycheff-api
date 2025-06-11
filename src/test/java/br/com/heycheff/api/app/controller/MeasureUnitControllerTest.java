@@ -1,5 +1,6 @@
 package br.com.heycheff.api.app.controller;
 
+import br.com.heycheff.api.config.TestConfiguration;
 import br.com.heycheff.api.data.model.MeasureUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,9 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SpringBootTest(classes = {TestConfiguration.class})
 class MeasureUnitControllerTest {
 
     @Autowired
