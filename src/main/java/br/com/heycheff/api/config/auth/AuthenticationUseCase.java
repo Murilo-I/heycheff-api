@@ -9,38 +9,33 @@ import br.com.heycheff.api.util.exception.AccountNotRegisteredException;
 import br.com.heycheff.api.util.exception.GoogleOauthException;
 import com.clerk.backend_api.Clerk;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
 import java.util.Objects;
 
 @Slf4j
 @Service
 public class AuthenticationUseCase {
 
-    @Value("${heycheff.oauth.google-client-id}")
-    String googleClientId;
-    @Value("${heycheff.clerk.secret}")
-    String clerkSecret;
-
     final AuthenticationManager authManager;
     final TokenService tokenService;
     final UserUseCase userService;
+    final GoogleIdTokenVerifier verifier;
+    final Clerk clerk;
 
     public AuthenticationUseCase(AuthenticationManager authManager,
                                  TokenService tokenService,
-                                 UserUseCase userService) {
+                                 UserUseCase userService, GoogleIdTokenVerifier verifier, Clerk clerk) {
         this.authManager = authManager;
         this.tokenService = tokenService;
         this.userService = userService;
+        this.verifier = verifier;
+        this.clerk = clerk;
     }
 
     public TokenDTO authenticate(UserDTO user) {
@@ -58,10 +53,6 @@ public class AuthenticationUseCase {
 
     public User verifyGoogleOauthToken(String token) {
         try {
-            var verifier = new GoogleIdTokenVerifier
-                    .Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
-                    .setAudience(Collections.singletonList(googleClientId))
-                    .build();
             var tokenId = verifier.verify(token);
 
             if (Objects.nonNull(tokenId)) {
@@ -84,7 +75,6 @@ public class AuthenticationUseCase {
 
     public User verifyClerkSessionId(ClerkRequest request) {
         try {
-            var clerk = Clerk.builder().bearerAuth(clerkSecret).build();
             var response = clerk.sessions().get().sessionId(request.sessionId()).call();
 
             if (response.session().isPresent()) {

@@ -56,7 +56,7 @@ class RecipeServiceTest {
         when(seqGenUseCase.generateSequence(anyString())).thenReturn(ID);
         when(fileUseCase.salvar(any(), anyString())).thenReturn(THUMB);
 
-        var recipe = recipeUseCase.save(request(), multipart());
+        var recipe = recipeUseCase.save(request(), multipart("recipe"));
 
         assertEquals(expected.getSeqId(), recipe.getSeqId());
     }

@@ -141,25 +141,33 @@ public class UserService implements UserUseCase {
     public void appendWatchedVideo(WatchedRecipe watchedRecipe) {
         var principal = (User) authFacade.getAuthentication().getPrincipal();
         var user = userRepository.findById(principal.getId()).orElseThrow(UserNotFoundException::new);
-        var recipes = user.getWatchedRecipes();
+        var recipes = new HashSet<>(user.getWatchedRecipes());
+        var recipeId = watchedRecipe.getRecipeId();
 
-        if (watchedRecipe.isWatchedEntirely())
-            recipes.stream().filter(w -> w.getRecipeId().equals(watchedRecipe.getRecipeId())
-                            && Boolean.FALSE.equals(w.isWatchedEntirely()))
-                    .findFirst().ifPresent(recipes::remove);
-        else {
-            var isWatched = recipes.stream().filter(w -> w.getRecipeId()
-                            .equals(watchedRecipe.getRecipeId()) && w.isWatchedEntirely())
-                    .findFirst();
-
-            if (isWatched.isPresent()) return;
+        if (watchedRecipe.isWatchedEntirely()) {
+            var toRemove = findPartialWatch(recipes, recipeId);
+            toRemove.ifPresent(recipes::remove);
+        } else {
+            var alreadyWatchedFully = hasFullyWatched(recipes, recipeId);
+            if (alreadyWatchedFully) return;
         }
 
         recipes.add(watchedRecipe);
 
-        if (!principal.getWatchedRecipes().equals(recipes)) {
+        if (!principal.getWatchedRecipes().containsAll(recipes)) {
             user.setWatchedRecipes(recipes);
             userRepository.save(user);
         }
+    }
+
+    private static boolean hasFullyWatched(HashSet<WatchedRecipe> recipes, String recipeId) {
+        return recipes.stream().anyMatch(w -> w.getRecipeId().equals(recipeId)
+                && w.isWatchedEntirely());
+    }
+
+    private static Optional<WatchedRecipe> findPartialWatch(HashSet<WatchedRecipe> recipes, String recipeId) {
+        return recipes.stream().filter(w -> w.getRecipeId().equals(recipeId)
+                        && Boolean.FALSE.equals(w.isWatchedEntirely()))
+                .findFirst();
     }
 }

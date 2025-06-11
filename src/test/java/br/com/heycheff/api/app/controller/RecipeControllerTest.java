@@ -7,6 +7,7 @@ import br.com.heycheff.api.app.dto.response.RecipeId;
 import br.com.heycheff.api.app.dto.response.RecipeModal;
 import br.com.heycheff.api.app.usecase.RecipeUseCase;
 import br.com.heycheff.api.config.TestConfiguration;
+import br.com.heycheff.api.data.helper.DataHelper;
 import br.com.heycheff.api.util.exception.RecipeNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -103,15 +103,8 @@ class RecipeControllerTest {
     void includeRecipe() throws Exception {
         when(useCase.save(any(), any())).thenReturn(new RecipeId(recipe().getSeqId()));
 
-        var mockFile = new MockMultipartFile(
-                "thumb",
-                "hello.txt",
-                MediaType.TEXT_PLAIN_VALUE,
-                "Hello, World!".getBytes()
-        );
-
         mvc.perform(multipart(URL)
-                        .file(mockFile)
+                        .file(DataHelper.multipart("thumb"))
                         .param("titulo", "Camarão do Baiano")
                         .param("tags", "[ { \"id\": 1, \"tag\": \"Salgado\" } ]")
                         .param("userId", "6744ef2d210d581f27826e05"))

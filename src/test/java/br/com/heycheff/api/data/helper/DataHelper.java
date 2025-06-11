@@ -3,11 +3,13 @@ package br.com.heycheff.api.data.helper;
 import br.com.heycheff.api.app.dto.ProductDTO;
 import br.com.heycheff.api.app.dto.StepDTO;
 import br.com.heycheff.api.app.dto.TagDTO;
+import br.com.heycheff.api.app.dto.request.ClerkRequest;
 import br.com.heycheff.api.app.dto.request.RecipeRequest;
 import br.com.heycheff.api.app.dto.request.UserRequest;
 import br.com.heycheff.api.app.dto.response.WatchedRecipe;
 import br.com.heycheff.api.data.model.*;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.*;
@@ -92,7 +94,15 @@ public class DataHelper {
         return PageRequest.of(1, 1);
     }
 
-    public static MockMultipartFile multipart() {
-        return new MockMultipartFile("multipart", new byte[]{});
+    public static MockMultipartFile multipart(String name) {
+        return new MockMultipartFile(
+                name, "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
+    }
+
+    public static ClerkRequest clerkRequest() {
+        return new ClerkRequest("sessionId", "uEmail");
     }
 }

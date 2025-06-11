@@ -41,7 +41,7 @@ class StepServiceTest {
                 .thenReturn(Optional.of(new ProductDescriptions(DESC)));
         when(fileUseCase.salvar(any(), anyString())).thenReturn(PATH);
 
-        var step = stepUseCase.save(dto(), multipart(), ID);
+        var step = stepUseCase.save(dto(), multipart("step"), ID);
 
         Assertions.assertEquals(2, step.getProducts().size());
         Assertions.assertEquals(PREPARE_MODE, step.getPreparationMode());
@@ -77,7 +77,7 @@ class StepServiceTest {
                 .thenReturn(new ProductDescriptions(DESC));
         when(fileUseCase.salvar(any(), anyString())).thenReturn(PATH);
 
-        var updated = stepUseCase.update(dto(), multipart(), 2, ID);
+        var updated = stepUseCase.update(dto(), multipart("step"), 2, ID);
 
         assertEquals(DESC, updated.getProducts().get(0).getDescription());
     }
