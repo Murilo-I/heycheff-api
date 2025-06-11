@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static br.com.heycheff.api.data.helper.DataHelper.ID;
+import static br.com.heycheff.api.data.helper.DataHelper.recipe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -28,9 +30,9 @@ class TagServiceTest {
 
     @Test
     void listTagsByRecipe() {
-        when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(RecipeServiceTest.recipe()));
+        when(repository.findBySeqId(anyLong())).thenReturn(Optional.of(recipe()));
 
-        var tags = useCase.findByRecipeId(RecipeServiceTest.ID);
+        var tags = useCase.findByRecipeId(ID);
 
         assertEquals(3, tags.size());
         assertEquals(Tags.VEGANO.getTag(), tags.get(2).getTag());
@@ -39,6 +41,6 @@ class TagServiceTest {
     @Test
     void throwRecipeNotFoundWhenListingTagsByRecipe() {
         when(repository.findBySeqId(anyLong())).thenReturn(Optional.empty());
-        assertThrows(RecipeNotFoundException.class, () -> useCase.findByRecipeId(RecipeServiceTest.ID));
+        assertThrows(RecipeNotFoundException.class, () -> useCase.findByRecipeId(ID));
     }
 }

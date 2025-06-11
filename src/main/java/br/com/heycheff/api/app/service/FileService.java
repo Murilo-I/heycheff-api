@@ -1,10 +1,14 @@
 package br.com.heycheff.api.app.service;
 
+import br.com.heycheff.api.app.usecase.BlobUseCase;
 import br.com.heycheff.api.app.usecase.FileUseCase;
 import br.com.heycheff.api.util.exception.MediaException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,28 +33,44 @@ public class FileService implements FileUseCase {
 
     private static final String OS_NAME = "os.name";
     private static final String WINDOWS = "Windows";
+    private static final String PROD = "prod";
 
     @Value("${media-server-paths}")
     List<String> serverPaths;
 
     final ServletContext context;
+    final Environment environment;
+    final BlobUseCase blobUseCase;
     private String basePath;
+    private boolean isProfileProd;
 
-    public FileService(ServletContext context) {
+    public FileService(ServletContext context, Environment environment, BlobUseCase blobUseCase) {
         this.context = context;
+        this.environment = environment;
+        this.blobUseCase = blobUseCase;
+    }
+
+    @PostConstruct
+    public void init() {
+        var activeProfiles = Arrays.stream(environment.getActiveProfiles()).toList();
+        isProfileProd = activeProfiles.contains(PROD);
     }
 
     @Override
     public String salvar(MultipartFile file, String fileName) {
         try {
-            Path baseDir = Paths.get(getBasePath());
             String pathToSave = fileName + "." +
                     Objects.requireNonNull(file.getContentType()).split("/")[1];
-            Path filePath = baseDir.resolve(pathToSave);
+            if (isProfileProd) {
+                return blobUseCase.uploadMedia(file, pathToSave);
+            } else {
+                Path baseDir = Paths.get(getBasePath());
+                Path filePath = baseDir.resolve(pathToSave);
 
-            Files.createDirectories(baseDir);
-            file.transferTo(filePath.toFile());
-            return pathToSave;
+                Files.createDirectories(baseDir);
+                file.transferTo(filePath.toFile());
+                return pathToSave;
+            }
         } catch (NullPointerException e) {
             throw new MediaException("File must not be null", e);
         } catch (IOException e) {
@@ -59,6 +80,11 @@ public class FileService implements FileUseCase {
 
     @Override
     public Resource getMedia(String fileName) {
+        if (isProfileProd)
+            return new ByteArrayResource(
+                    blobUseCase.getFileOutputStream(fileName).toByteArray()
+            );
+
         Path baseDir = Paths.get(getBasePath());
         Path filePath = baseDir.resolve(fileName);
 
@@ -75,6 +101,8 @@ public class FileService implements FileUseCase {
 
     @Override
     public void delete(String fileName) {
+        if (isProfileProd) return;
+
         Path baseDir = Paths.get(getBasePath());
         Path filePath = baseDir.resolve(fileName);
 
@@ -89,7 +117,10 @@ public class FileService implements FileUseCase {
 
     @Override
     public String resolve(String path) {
-        return context.getContextPath() + "/media?path=" + path;
+        if (isProfileProd)
+            return path;
+        else
+            return context.getContextPath() + "/media?path=" + path;
     }
 
     private String getBasePath() {

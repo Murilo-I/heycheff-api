@@ -7,10 +7,10 @@ import br.com.heycheff.api.app.dto.response.UserRecommendationResponse;
 import br.com.heycheff.api.app.dto.response.UserResponse;
 import br.com.heycheff.api.app.dto.response.WatchedRecipe;
 import br.com.heycheff.api.app.usecase.AuthenticationFacade;
+import br.com.heycheff.api.app.usecase.RecipeDataUseCase;
 import br.com.heycheff.api.app.usecase.UserUseCase;
 import br.com.heycheff.api.data.model.Role;
 import br.com.heycheff.api.data.model.User;
-import br.com.heycheff.api.data.repository.RecipeRepository;
 import br.com.heycheff.api.data.repository.UserRepository;
 import br.com.heycheff.api.util.exception.UserNotFoundException;
 import br.com.heycheff.api.util.exception.UserRegistrationException;
@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static br.com.heycheff.api.util.mapper.TypeMapper.fromUser;
 
@@ -31,13 +28,13 @@ import static br.com.heycheff.api.util.mapper.TypeMapper.fromUser;
 public class UserService implements UserUseCase {
 
     final UserRepository userRepository;
-    final RecipeRepository recipeRepository;
+    final RecipeDataUseCase recipeDataUseCase;
     final AuthenticationFacade authFacade;
 
-    public UserService(UserRepository userRepository, RecipeRepository recipeRepository,
+    public UserService(UserRepository userRepository, RecipeDataUseCase recipeDataUseCase,
                        AuthenticationFacade authFacade) {
         this.userRepository = userRepository;
-        this.recipeRepository = recipeRepository;
+        this.recipeDataUseCase = recipeDataUseCase;
         this.authFacade = authFacade;
     }
 
@@ -70,8 +67,8 @@ public class UserService implements UserUseCase {
 
     @Override
     public UserResponse findById(String userId) {
-        var recipeCount = recipeRepository.findByOwnerId(
-                userId, PageRequest.of(1, 1)
+        var recipeCount = recipeDataUseCase.findByUserId(
+                userId, PageRequest.of(0, 1)
         ).getTotalElements();
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return fromUser(user, recipeCount);
@@ -100,27 +97,29 @@ public class UserService implements UserUseCase {
                 .orElseThrow(UserNotFoundException::new);
         var userToFollow = userRepository.findById(request.getUserToFollowId())
                 .orElseThrow(() -> new UserNotFoundException("Following ID Not Found!"));
-        var userFollowing = user.getFollowingIds();
 
-        if (user.equals(userToFollow))
-            return new FollowResponse(userFollowing);
+        if (user.equals(userToFollow)) {
+            return new FollowResponse(user.getFollowingIds());
+        }
 
-        boolean followingNotRemoved = !userFollowing.removeIf(request.getUserToFollowId()::equals);
-        if (followingNotRemoved)
-            userFollowing.add(request.getUserToFollowId());
+        var following = new HashSet<>(user.getFollowingIds());
+        var followers = new HashSet<>(userToFollow.getFollowersIds());
 
-        user.setFollowingIds(userFollowing);
+        boolean isNowFollowing = following.add(request.getUserToFollowId());
+        if (!isNowFollowing) {
+            following.remove(request.getUserToFollowId());
+            followers.remove(request.getUserId());
+        } else {
+            followers.add(request.getUserId());
+        }
+
+        user.setFollowingIds(new ArrayList<>(following));
         userRepository.save(user);
 
-        var userFollowers = userToFollow.getFollowersIds();
-        boolean followerNotRemoved = !userFollowers.removeIf(request.getUserId()::equals);
-        if (followerNotRemoved)
-            userFollowers.add(request.getUserId());
-
-        userToFollow.setFollowersIds(userFollowers);
+        userToFollow.setFollowersIds(new ArrayList<>(followers));
         userRepository.save(userToFollow);
 
-        return new FollowResponse(userFollowing);
+        return new FollowResponse(user.getFollowingIds());
     }
 
     @Override
@@ -142,25 +141,33 @@ public class UserService implements UserUseCase {
     public void appendWatchedVideo(WatchedRecipe watchedRecipe) {
         var principal = (User) authFacade.getAuthentication().getPrincipal();
         var user = userRepository.findById(principal.getId()).orElseThrow(UserNotFoundException::new);
-        var recipes = user.getWatchedRecipes();
+        var recipes = new HashSet<>(user.getWatchedRecipes());
+        var recipeId = watchedRecipe.getRecipeId();
 
-        if (watchedRecipe.isWatchedEntirely())
-            recipes.stream().filter(w -> w.getRecipeId().equals(watchedRecipe.getRecipeId())
-                            && Boolean.FALSE.equals(w.isWatchedEntirely()))
-                    .findFirst().ifPresent(recipes::remove);
-        else {
-            var isWatched = recipes.stream().filter(w -> w.getRecipeId()
-                            .equals(watchedRecipe.getRecipeId()) && w.isWatchedEntirely())
-                    .findFirst();
-
-            if (isWatched.isPresent()) return;
+        if (watchedRecipe.isWatchedEntirely()) {
+            var toRemove = findPartialWatch(recipes, recipeId);
+            toRemove.ifPresent(recipes::remove);
+        } else {
+            var alreadyWatchedFully = hasFullyWatched(recipes, recipeId);
+            if (alreadyWatchedFully) return;
         }
 
         recipes.add(watchedRecipe);
 
-        if (!principal.getWatchedRecipes().equals(recipes)) {
+        if (!principal.getWatchedRecipes().containsAll(recipes)) {
             user.setWatchedRecipes(recipes);
             userRepository.save(user);
         }
+    }
+
+    private static boolean hasFullyWatched(HashSet<WatchedRecipe> recipes, String recipeId) {
+        return recipes.stream().anyMatch(w -> w.getRecipeId().equals(recipeId)
+                && w.isWatchedEntirely());
+    }
+
+    private static Optional<WatchedRecipe> findPartialWatch(HashSet<WatchedRecipe> recipes, String recipeId) {
+        return recipes.stream().filter(w -> w.getRecipeId().equals(recipeId)
+                        && Boolean.FALSE.equals(w.isWatchedEntirely()))
+                .findFirst();
     }
 }

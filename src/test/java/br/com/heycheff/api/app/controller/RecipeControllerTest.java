@@ -6,13 +6,14 @@ import br.com.heycheff.api.app.dto.response.RecipeFeed;
 import br.com.heycheff.api.app.dto.response.RecipeId;
 import br.com.heycheff.api.app.dto.response.RecipeModal;
 import br.com.heycheff.api.app.usecase.RecipeUseCase;
+import br.com.heycheff.api.config.TestConfiguration;
+import br.com.heycheff.api.data.helper.DataHelper;
 import br.com.heycheff.api.util.exception.RecipeNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,8 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static br.com.heycheff.api.app.service.RecipeServiceTest.multipart;
-import static br.com.heycheff.api.app.service.RecipeServiceTest.recipe;
+import static br.com.heycheff.api.data.helper.DataHelper.pageRequest;
+import static br.com.heycheff.api.data.helper.DataHelper.recipe;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,9 +32,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SpringBootTest(classes = {TestConfiguration.class})
 class RecipeControllerTest {
 
     static final long ID = 1L;
@@ -48,7 +49,7 @@ class RecipeControllerTest {
     @Test
     @WithMockUser("heycheff")
     void loadFeed() throws Exception {
-        when(useCase.loadFeed(PageRequest.of(1, 1)))
+        when(useCase.loadFeed(pageRequest()))
                 .thenReturn(new PageResponse<>(
                         List.of(new RecipeFeed(
                                 ID, "thumb", "title", Collections.emptyList(), 15)
@@ -102,16 +103,11 @@ class RecipeControllerTest {
     void includeRecipe() throws Exception {
         when(useCase.save(any(), any())).thenReturn(new RecipeId(recipe().getSeqId()));
 
-        var formData = """
-                titulo:Camarão do Baiano
-                tags:[ { "id": 1, "tag": "Salgado" } ]
-                userId:6744ef2d210d581f27826e05
-                """;
-
-        mvc.perform(post(URL)
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .content(formData)
-                        .content(multipart().getBytes()))
+        mvc.perform(multipart(URL)
+                        .file(DataHelper.multipart("thumb"))
+                        .param("titulo", "Camarão do Baiano")
+                        .param("tags", "[ { \"id\": 1, \"tag\": \"Salgado\" } ]")
+                        .param("userId", "6744ef2d210d581f27826e05"))
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
