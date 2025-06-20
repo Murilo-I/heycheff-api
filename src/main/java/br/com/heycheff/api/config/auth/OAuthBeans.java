@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 import java.util.Collections;
 
 @Configuration
-@Profile("prod")
+@Profile({"prod", "dev"})
 public class OAuthBeans {
 
     @Value("${heycheff.oauth.google-client-id}")
