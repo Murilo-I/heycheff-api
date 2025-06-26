@@ -15,8 +15,8 @@ spring:
       auto-index-creation: true
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 24MB
+      max-file-size: 80MB
+      max-request-size: 84MB
 
 media-server-paths: C:\\heycheff\\media, /home/heycheff/media
 

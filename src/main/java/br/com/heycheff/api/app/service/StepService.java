@@ -101,8 +101,8 @@ public class StepService implements StepUseCase {
     private void setProducts(StepDTO stepDto, Step stepEntity) {
         stepEntity.setProducts(stepDto.getProdutos().stream().map(ProductDTO::toEntity).toList());
         stepDto.getProdutos().forEach(product -> {
-            if (productRepository.findByValue(product.getDesc()).isEmpty())
-                productRepository.save(new ProductDescriptions(product.getDesc()));
+            if (productRepository.findByValue(product.getDesc().toLowerCase()).isEmpty())
+                productRepository.save(new ProductDescriptions(product.getDesc().toLowerCase()));
         });
     }
 }
