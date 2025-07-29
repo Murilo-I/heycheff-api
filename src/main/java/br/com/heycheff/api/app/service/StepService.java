@@ -2,10 +2,7 @@ package br.com.heycheff.api.app.service;
 
 import br.com.heycheff.api.app.dto.ProductDTO;
 import br.com.heycheff.api.app.dto.StepDTO;
-import br.com.heycheff.api.app.usecase.FileUseCase;
-import br.com.heycheff.api.app.usecase.RecipeDataUseCase;
-import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
-import br.com.heycheff.api.app.usecase.StepUseCase;
+import br.com.heycheff.api.app.usecase.*;
 import br.com.heycheff.api.data.model.ProductDescriptions;
 import br.com.heycheff.api.data.model.Recipe;
 import br.com.heycheff.api.data.model.Step;
@@ -28,13 +25,15 @@ public class StepService implements StepUseCase {
     final ProductRepository productRepository;
     final FileUseCase fileUseCase;
     final SequenceGeneratorUseCase sequenceUseCase;
+    final AuthenticationFacade authFacade;
 
     public StepService(RecipeDataUseCase recipeData, ProductRepository productRepository,
-                       FileUseCase fileUseCase, SequenceGeneratorUseCase sequenceUseCase) {
+                       FileUseCase fileUseCase, SequenceGeneratorUseCase sequenceUseCase, AuthenticationFacade authFacade) {
         this.recipeData = recipeData;
         this.productRepository = productRepository;
         this.fileUseCase = fileUseCase;
         this.sequenceUseCase = sequenceUseCase;
+        this.authFacade = authFacade;
     }
 
     @Override
@@ -47,6 +46,7 @@ public class StepService implements StepUseCase {
     @Override
     public Step save(StepDTO step, MultipartFile video, Long recipeId) {
         var recipe = recipeData.validateRecipe(recipeId);
+        authFacade.checkAuthorship(recipe.getOwnerId());
         var savedStep = new Step(sequenceUseCase.generateSequence(Step.STEP_SEQUENCE),
                 step.getStepNumber(), step.getModoPreparo(), step.getTimeMinutes());
 
@@ -63,6 +63,7 @@ public class StepService implements StepUseCase {
     @Override
     public Step delete(Integer stepNumber, Long recipeId) {
         var recipe = recipeData.validateRecipe(recipeId);
+        authFacade.checkAuthorship(recipe.getOwnerId());
         var delStep = validateStep(stepNumber, recipe);
 
         fileUseCase.delete(delStep.getPath());

@@ -1,9 +1,6 @@
 package br.com.heycheff.api.app.service;
 
-import br.com.heycheff.api.app.usecase.FileUseCase;
-import br.com.heycheff.api.app.usecase.RecipeDataUseCase;
-import br.com.heycheff.api.app.usecase.SequenceGeneratorUseCase;
-import br.com.heycheff.api.app.usecase.StepUseCase;
+import br.com.heycheff.api.app.usecase.*;
 import br.com.heycheff.api.data.model.ProductDescriptions;
 import br.com.heycheff.api.data.repository.ProductRepository;
 import br.com.heycheff.api.util.exception.StepNotInRecipeException;
@@ -24,13 +21,15 @@ class StepServiceTest {
     ProductRepository productRepository = mock(ProductRepository.class);
     FileUseCase fileUseCase = mock(FileUseCase.class);
     SequenceGeneratorUseCase sequenceUseCase = mock(SequenceGeneratorUseCase.class);
+    AuthenticationFacade authFacade = mock(AuthenticationFacade.class);
     StepUseCase stepUseCase = new StepService(
-            recipeData, productRepository, fileUseCase, sequenceUseCase
+            recipeData, productRepository, fileUseCase, sequenceUseCase, authFacade
     );
 
     @BeforeEach
     void validateRecipe() {
         when(recipeData.validateRecipe(anyLong())).thenReturn(recipe());
+        doNothing().when(authFacade).checkAuthorship(anyString());
         doNothing().when(recipeData).persist(any());
     }
 

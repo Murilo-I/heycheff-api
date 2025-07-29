@@ -20,11 +20,15 @@ class RecipeServiceTest {
     FileUseCase fileUseCase = mock(FileUseCase.class);
     SequenceGeneratorUseCase seqGenUseCase = mock(SequenceGeneratorUseCase.class);
     UserUseCase userUseCase = mock(UserUseCase.class);
-    RecipeUseCase recipeUseCase = new RecipeService(repository, fileUseCase, seqGenUseCase, userUseCase);
+    AuthenticationFacade authFacade = mock(AuthenticationFacade.class);
+    RecipeUseCase recipeUseCase = new RecipeService(
+            repository, fileUseCase, seqGenUseCase, userUseCase, authFacade
+    );
 
     @BeforeEach
     void validateRecipe() {
         when(repository.validateRecipe(anyLong())).thenReturn(recipe());
+        doNothing().when(authFacade).checkAuthorship(anyString());
     }
 
     @Test

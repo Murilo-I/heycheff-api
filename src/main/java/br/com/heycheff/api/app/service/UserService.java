@@ -95,6 +95,7 @@ public class UserService implements UserUseCase {
     public FollowResponse follow(FollowRequest request) {
         var user = userRepository.findById(request.getUserId())
                 .orElseThrow(UserNotFoundException::new);
+        authFacade.checkAuthorship(user.getId());
         var userToFollow = userRepository.findById(request.getUserToFollowId())
                 .orElseThrow(() -> new UserNotFoundException("Following ID Not Found!"));
 

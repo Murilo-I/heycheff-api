@@ -47,6 +47,16 @@ public class ExceptionHandlerAdvice {
         );
     }
 
+    @ExceptionHandler({RecipePersistenceProhibitedException.class})
+    public ResponseEntity<ErrorMessage> handleForbidden(RuntimeException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ErrorMessage(exception.getMessage(), new Status(
+                        HttpStatus.FORBIDDEN.value(),
+                        HttpStatus.FAILED_DEPENDENCY.getReasonPhrase()
+                ), Collections.emptyMap())
+        );
+    }
+
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<ErrorMessage> handleConstraintViolation(ConstraintViolationException exception) {
         var mapErrors = new HashMap<String, String>();

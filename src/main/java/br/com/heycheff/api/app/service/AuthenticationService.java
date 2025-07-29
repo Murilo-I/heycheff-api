@@ -1,8 +1,10 @@
 package br.com.heycheff.api.app.service;
 
 import br.com.heycheff.api.app.usecase.AuthenticationFacade;
+import br.com.heycheff.api.data.model.Recipe;
 import br.com.heycheff.api.data.model.User;
 import br.com.heycheff.api.data.repository.UserRepository;
+import br.com.heycheff.api.util.exception.RecipePersistenceProhibitedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,5 +35,12 @@ public class AuthenticationService implements UserDetailsService, Authentication
     @Override
     public Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    @Override
+    public void checkAuthorship(String userId) {
+        var principal = (User) getAuthentication().getPrincipal();
+        if (!principal.getId().equals(userId))
+            throw new RecipePersistenceProhibitedException();
     }
 }

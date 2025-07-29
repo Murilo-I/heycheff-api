@@ -21,8 +21,7 @@ import static br.com.heycheff.api.data.helper.DataHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
@@ -35,6 +34,7 @@ class UserServiceTest {
     void setup() {
         when(userRepository.save(any(User.class))).thenReturn(user());
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user()));
+        doNothing().when(authFacade).checkAuthorship(anyString());
     }
 
     @Test

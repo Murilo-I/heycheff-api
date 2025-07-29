@@ -29,13 +29,15 @@ public class RecipeService implements RecipeUseCase {
     final FileUseCase fileUseCase;
     final SequenceGeneratorUseCase sequenceUseCase;
     final UserUseCase userUseCase;
+    final AuthenticationFacade authFacade;
 
     public RecipeService(RecipeDataUseCase dataUseCase, FileUseCase fileUseCase,
-                         SequenceGeneratorUseCase sequenceUseCase, UserUseCase userUseCase) {
+                         SequenceGeneratorUseCase sequenceUseCase, UserUseCase userUseCase, AuthenticationFacade authFacade) {
         this.dataUseCase = dataUseCase;
         this.fileUseCase = fileUseCase;
         this.sequenceUseCase = sequenceUseCase;
         this.userUseCase = userUseCase;
+        this.authFacade = authFacade;
     }
 
     @Override
@@ -99,6 +101,7 @@ public class RecipeService implements RecipeUseCase {
     @Override
     @Transactional
     public RecipeId save(RecipeRequest request, MultipartFile thumb) {
+        authFacade.checkAuthorship(request.getUserId());
         Recipe recipe = new Recipe(request.getTitulo(), request.getUserId());
         recipe.setSeqId(sequenceUseCase.generateSequence(Recipe.RECIPE_SEQUENCE));
         recipe.setTags(request.getTags().stream().map(TagDTO::toEntity).toList());
@@ -111,6 +114,7 @@ public class RecipeService implements RecipeUseCase {
     @Transactional
     public void updateStatus(RecipeStatus dto, Long id) {
         var recipe = dataUseCase.validateRecipe(id);
+        authFacade.checkAuthorship(recipe.getOwnerId());
         recipe.setStatus(dto.getStatus());
         dataUseCase.persist(recipe);
     }
